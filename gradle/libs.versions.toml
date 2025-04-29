@@ -1,5 +1,6 @@
 [versions]
 agp = "8.9.2"
+kotlinxSerializationJson = "1.7.3"
 ksp = "2.0.21-1.0.27"
 hiltAndroid = "2.56.1"
 kotlin = "2.0.21"
@@ -10,9 +11,11 @@ espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.1"
 composeBom = "2025.04.01"
+navigationCompose = "2.8.9"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -28,6 +31,7 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 hilt-android           = { module = "com.google.dagger:hilt-android",           version.ref = "hiltAndroid" }
 hilt-android-compiler  = { module = "com.google.dagger:hilt-android-compiler",  version.ref = "hiltAndroid" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 
 
 [plugins]

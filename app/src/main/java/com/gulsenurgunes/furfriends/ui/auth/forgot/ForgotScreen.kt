@@ -55,14 +55,14 @@ fun ForgotScreen() {
         ){
             AuthButton(
                 text = "Send Mail",
-                onClick = { /* TODO */ },
+                onClick = {  },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(126.dp))
             TextWithAction(
                 text = "Back To ",
                 actionText = "Sign In",
-                onActionClick = { /* TODO */ }
+                onActionClick = {  }
             )
         }
     }

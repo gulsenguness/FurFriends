@@ -1,7 +1,6 @@
 package com.gulsenurgunes.furfriends.ui.auth.signin
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,7 +34,11 @@ import com.gulsenurgunes.furfriends.ui.auth.forgot.ForgotScreen
 import com.gulsenurgunes.furfriends.ui.auth.signup.SignUpScreen
 
 @Composable
-fun SignInScreen() {
+fun SignInScreen(
+    onForgotPasswordClick: () -> Unit,
+    onHomeClick: () -> Unit,
+    onSignUpClick: () -> Unit,
+) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
 
@@ -68,7 +71,7 @@ fun SignInScreen() {
                 isPassword = true
             )
             TextButton(
-                onClick = { },
+                onClick = { onForgotPasswordClick() },
                 modifier = Modifier.align(Alignment.End)
             ) {
                 Text("Forgot Password?")
@@ -76,7 +79,7 @@ fun SignInScreen() {
             Spacer(modifier = Modifier.height(16.dp))
             AuthButton(
                 text = "Sign In",
-                onClick = { },
+                onClick = onHomeClick,
                 modifier = Modifier.fillMaxWidth(),
                 containerColor = Color.Black,
                 contentColor = Color.White,
@@ -88,7 +91,7 @@ fun SignInScreen() {
             TextWithAction(
                 text = "Not a member?",
                 actionText = "Create an account",
-                onActionClick = {})
+                onActionClick = { onSignUpClick() })
         }
     }
 }
@@ -97,7 +100,7 @@ fun SignInScreen() {
 @Preview(showBackground = true)
 @Composable
 fun SignInPreview() {
-    SignInScreen()
+    SignInScreen(onForgotPasswordClick = {}, onHomeClick = {}, onSignUpClick = {})
 }
 
 @Preview(showBackground = true)

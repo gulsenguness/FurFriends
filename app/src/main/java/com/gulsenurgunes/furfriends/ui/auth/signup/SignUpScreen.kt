@@ -26,13 +26,22 @@ import com.gulsenurgunes.furfriends.ui.auth.components.SocialIconsRow
 import com.gulsenurgunes.furfriends.ui.auth.components.TextWithAction
 
 @Composable
-fun SignUpScreen() {
+fun SignUpScreen(
+    onSignUpClick: () -> Unit = {},
+    onSignInClick: () -> Unit = {},
+) {
     var name by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        HeaderImage(R.drawable.animal2, "Sign Up Header Image", modifier = Modifier.fillMaxWidth().weight(1f))
+        HeaderImage(
+            R.drawable.animal2,
+            "Sign Up Header Image",
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        )
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -65,7 +74,7 @@ fun SignUpScreen() {
             CheckboxConditions()
             AuthButton(
                 text = "Sign Up",
-                onClick = { },
+                onClick = onSignUpClick,
                 modifier = Modifier.padding(top = 16.dp)
             )
             DividerWithText("Or Sign Up With")
@@ -73,7 +82,8 @@ fun SignUpScreen() {
             TextWithAction(
                 text = "Already have and account? ",
                 actionText = "Sign In",
-                onActionClick = {})
+                onActionClick = onSignInClick
+            )
         }
     }
 }
