@@ -63,7 +63,7 @@ fun AppNavHost(
             }
             composable(Screen.SignUp.route) {
                 SignUpScreen(
-                    onSignUpClick = {
+                    onSignUpSuccess = {
                         navController.navigate(Screen.SignIn.route) {
                             popUpTo(Screen.SignUp.route) { inclusive = true }
                         }

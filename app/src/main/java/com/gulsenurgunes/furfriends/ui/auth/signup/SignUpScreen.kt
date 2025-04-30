@@ -8,15 +8,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.gulsenurgunes.furfriends.R
+import com.gulsenurgunes.furfriends.common.UIState
+import com.gulsenurgunes.furfriends.domain.model.User
 import com.gulsenurgunes.furfriends.ui.auth.components.AuthButton
 import com.gulsenurgunes.furfriends.ui.auth.components.DividerWithText
 import com.gulsenurgunes.furfriends.ui.auth.components.HeaderImage
@@ -27,13 +26,21 @@ import com.gulsenurgunes.furfriends.ui.auth.components.TextWithAction
 
 @Composable
 fun SignUpScreen(
-    onSignUpClick: () -> Unit = {},
+    onSignUpSuccess: (User) -> Unit = {},
     onSignInClick: () -> Unit = {},
+    signUpViewModel: SignUpViewModel = hiltViewModel()
 ) {
-    var name by rememberSaveable { mutableStateOf("") }
-    var email by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
 
+    val email = signUpViewModel.e_mail
+    val password = signUpViewModel.password
+    val name = signUpViewModel.name
+    val signUpState = signUpViewModel.signUpState
+
+    LaunchedEffect(signUpState) {
+        if (signUpState is UIState.Success) {
+            onSignUpSuccess((signUpState).user)
+        }
+    }
     Column(modifier = Modifier.fillMaxSize()) {
         HeaderImage(
             R.drawable.animal2,
@@ -58,23 +65,23 @@ fun SignUpScreen(
             LabeledTextField(
                 label = "Name *",
                 value = name,
-                onValueChange = { name = it }
+                onValueChange = { signUpViewModel.name }
             )
             LabeledTextField(
                 label = "Email Address *",
                 value = email,
-                onValueChange = { email = it }
+                onValueChange = { signUpViewModel.onEmailChange(it) },
             )
             LabeledTextField(
                 label = "Password *",
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = { signUpViewModel.onPasswordChange(it) },
                 isPassword = true
             )
             CheckboxConditions()
             AuthButton(
                 text = "Sign Up",
-                onClick = onSignUpClick,
+                onClick = { signUpViewModel.onSignUpClick() },
                 modifier = Modifier.padding(top = 16.dp)
             )
             DividerWithText("Or Sign Up With")
@@ -88,8 +95,8 @@ fun SignUpScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun SignUpPreview() {
-    SignUpScreen()
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun SignUpPreview() {
+//    SignUpScreen()
+//}
