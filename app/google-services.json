@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "240566561408",
+    "project_id": "furfriends-dc32b",
+    "storage_bucket": "furfriends-dc32b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:240566561408:android:baf07fce475984b27e1465",
+        "android_client_info": {
+          "package_name": "com.gulsenurgunes.furfriends"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXb0jip7kCy_2fTIj_xGtr3lNJJhyg1gM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

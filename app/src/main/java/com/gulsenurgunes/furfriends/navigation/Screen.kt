@@ -1,4 +1,4 @@
-package com.gulsenurgunes.furfriends
+package com.gulsenurgunes.furfriends.navigation
 
 import kotlinx.serialization.Serializable
 

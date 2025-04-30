@@ -1,4 +1,4 @@
-package com.gulsenurgunes.furfriends
+package com.gulsenurgunes.furfriends.navigation
 
 object GraphRoutes {
     const val AUTH = "auth_graph"

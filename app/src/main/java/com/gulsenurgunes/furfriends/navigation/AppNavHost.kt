@@ -1,4 +1,4 @@
-package com.gulsenurgunes.furfriends
+package com.gulsenurgunes.furfriends.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
