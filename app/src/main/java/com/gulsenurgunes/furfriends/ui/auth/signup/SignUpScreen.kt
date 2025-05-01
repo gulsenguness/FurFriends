@@ -7,8 +7,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -23,6 +28,7 @@ import com.gulsenurgunes.furfriends.ui.auth.components.LabeledTextField
 import com.gulsenurgunes.furfriends.ui.auth.components.ScreenHeader
 import com.gulsenurgunes.furfriends.ui.auth.components.SocialIconsRow
 import com.gulsenurgunes.furfriends.ui.auth.components.TextWithAction
+import java.lang.Error
 
 @Composable
 fun SignUpScreen(
@@ -31,66 +37,84 @@ fun SignUpScreen(
     signUpViewModel: SignUpViewModel = hiltViewModel()
 ) {
 
-    val email = signUpViewModel.e_mail
+    val email = signUpViewModel.email
     val password = signUpViewModel.password
     val name = signUpViewModel.name
     val signUpState = signUpViewModel.signUpState
+    val snackbarHost = remember { SnackbarHostState() }
 
     LaunchedEffect(signUpState) {
-        if (signUpState is UIState.Success) {
-            onSignUpSuccess((signUpState).user)
+
+        when (signUpState) {
+            is UIState.Success -> {
+                onSignUpSuccess((signUpState).user)
+                signUpViewModel.resetState()
+            }
+            is UIState.Error -> {
+                snackbarHost.showSnackbar((signUpState).message)
+            }
+            else -> {}
         }
+
     }
-    Column(modifier = Modifier.fillMaxSize()) {
-        HeaderImage(
-            R.drawable.animal2,
-            "Sign Up Header Image",
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        )
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(3f)
-                .padding(horizontal = 24.dp),
-            verticalArrangement = Arrangement.SpaceEvenly,
-            horizontalAlignment = Alignment.Start
-        ) {
-            ScreenHeader(
-                title = "Create Your Account",
-                subtitle = "Welcome back! Please enter your details"
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHost) }
+    ) { padding ->
+        Column(modifier = Modifier.fillMaxSize()) {
+            HeaderImage(
+                R.drawable.animal2,
+                "Sign Up Header Image",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
             )
-            Spacer(modifier = Modifier.height(24.dp))
-            LabeledTextField(
-                label = "Name *",
-                value = name,
-                onValueChange = { signUpViewModel.name }
-            )
-            LabeledTextField(
-                label = "Email Address *",
-                value = email,
-                onValueChange = { signUpViewModel.onEmailChange(it) },
-            )
-            LabeledTextField(
-                label = "Password *",
-                value = password,
-                onValueChange = { signUpViewModel.onPasswordChange(it) },
-                isPassword = true
-            )
-            CheckboxConditions()
-            AuthButton(
-                text = "Sign Up",
-                onClick = { signUpViewModel.onSignUpClick() },
-                modifier = Modifier.padding(top = 16.dp)
-            )
-            DividerWithText("Or Sign Up With")
-            SocialIconsRow()
-            TextWithAction(
-                text = "Already have and account? ",
-                actionText = "Sign In",
-                onActionClick = onSignInClick
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(3f)
+                    .padding(horizontal = 24.dp),
+                verticalArrangement = Arrangement.SpaceEvenly,
+                horizontalAlignment = Alignment.Start
+            ) {
+                ScreenHeader(
+                    title = "Create Your Account",
+                    subtitle = "Welcome back! Please enter your details"
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                LabeledTextField(
+                    label = "Name *",
+                    value = name,
+                    onValueChange = { signUpViewModel.onNameChange(it) },
+                    errorMessage = if (name.isBlank() && signUpState is UIState.Error) "İsim boş bırakılamaz" else null
+                )
+                LabeledTextField(
+                    label = "Email Address *",
+                    value = email,
+                    onValueChange = { signUpViewModel.onEmailChange(it) },
+                    errorMessage = if (email.isBlank() && signUpState is UIState.Error) "E-posta boş bırakılamaz" else null
+                )
+                LabeledTextField(
+                    label = "Password *",
+                    value = password,
+                    onValueChange = { signUpViewModel.onPasswordChange(it) },
+                    isPassword = true,
+                    errorMessage = if (password.isBlank() && signUpState is UIState.Error) "Password boş bırakılamaz" else null
+                )
+                CheckboxConditions()
+                AuthButton(
+                    text = "Sign Up",
+                    onClick = { signUpViewModel.onSignUpClick() },
+                    modifier = Modifier.padding(top = 16.dp),
+                    enabled = name.isNotBlank() && email.isNotBlank() && password.isNotBlank()
+                )
+                DividerWithText("Or Sign Up With")
+                SocialIconsRow()
+                TextWithAction(
+                    text = "Already have and account? ",
+                    actionText = "Sign In",
+                    onActionClick = onSignInClick
+                )
+            }
         }
     }
 }

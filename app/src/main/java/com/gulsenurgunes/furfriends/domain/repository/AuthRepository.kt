@@ -5,6 +5,7 @@ import com.gulsenurgunes.furfriends.domain.model.User
 
 interface AuthRepository {
     suspend fun signUp(
+        name: String,
         email: String,
         password: String
     ): Resource<User>

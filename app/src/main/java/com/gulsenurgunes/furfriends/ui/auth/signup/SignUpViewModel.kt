@@ -16,7 +16,7 @@ import javax.inject.Inject
 class SignUpViewModel @Inject constructor(
     private val signUpUseCase: SignUpUseCase,
 ) : ViewModel() {
-    var e_mail by mutableStateOf("")
+    var email by mutableStateOf("")
         private set
     var password by mutableStateOf("")
         private set
@@ -25,25 +25,40 @@ class SignUpViewModel @Inject constructor(
     var signUpState by mutableStateOf<UIState>(UIState.Idle)
         private set
 
-    fun onEmailChange(email: String) {
-        e_mail = email
+
+    fun onEmailChange(new: String) {
+        email = new
     }
+
 
     fun onPasswordChange(password: String) {
         this.password = password
+
     }
 
-    fun onNameChange(name: String) {
-        this.name = name
+    fun onNameChange(new: String) {
+        name = new
     }
+
 
     fun onSignUpClick() {
+        if (name.isBlank() || email.isBlank() || password.isBlank()) {
+            signUpState = UIState.Error("Lütfen tüm alanları doldurun.")
+            return
+        }
         viewModelScope.launch {
             signUpState = UIState.Loading
-            signUpState = when (val res = signUpUseCase(e_mail, password)) {
-                is Resource.Success -> UIState.Success(res.data)
-                is Resource.Error -> UIState.Error(res.message)
+            signUpState = when (val res = signUpUseCase(name, email, password)) {
+                is Resource.Success ->
+                    UIState.Success(res.data)
+                is Resource.Error ->
+                    UIState.Error(res.message ?: "Kayıt başarısız oldu.")
             }
         }
     }
+
+    fun resetState() {
+        signUpState = UIState.Idle
+    }
+
 }

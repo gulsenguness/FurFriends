@@ -14,6 +14,7 @@ class FirebaseAuthDataSourceImpl @Inject constructor(
 ) : AuthDataSource {
 
     override suspend fun createUser(
+        name:String,
         email: String,
         password: String
     ): FirebaseUser =

@@ -31,12 +31,26 @@ class SignInViewModel @Inject constructor(
     }
 
     fun onSignInClick() {
+        if (email.isBlank() || password.isBlank()) {
+            signInState = UIState.Error("Email and password cannot be left blank.\n")
+            return
+        }
         viewModelScope.launch {
             signInState = UIState.Loading
             signInState = when (val res = signInUseCase(email, password)) {
-                is Resource.Success -> UIState.Success(res.data)
-                is Resource.Error -> UIState.Error(res.message)
+                is Resource.Success ->
+                    UIState.Success(res.data)
+
+                is Resource.Error -> {
+                    UIState.Error(res.message)
+                }
             }
         }
+
     }
+
+    fun resetState() {
+        signInState = UIState.Idle
+    }
+
 }

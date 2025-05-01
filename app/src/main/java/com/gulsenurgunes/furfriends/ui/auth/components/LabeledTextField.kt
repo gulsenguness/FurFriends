@@ -19,8 +19,9 @@ fun LabeledTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    isPassword: Boolean = false
-) {
+    isPassword: Boolean = false,
+    errorMessage:String?= null,
+    ) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(4.dp)

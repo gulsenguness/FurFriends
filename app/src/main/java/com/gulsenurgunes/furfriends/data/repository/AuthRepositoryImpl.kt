@@ -11,16 +11,17 @@ class AuthRepositoryImpl @Inject constructor(
     private val dataSource: AuthDataSource
 ) : AuthRepository {
     override suspend fun signUp(
-
+        name: String,
         email: String,
         password: String
     ): Resource<User> =
         try {
             val fbUser = dataSource.createUser(
+                name = name,
                 email = email,
                 password = password,
             )
-            val user = UserMapper.fromFirebase(fbUser)
+            val user = UserMapper.fromFirebase(fbUser,password)
             Resource.Success(user)
         } catch (e: Exception) {
             Resource.Error(e.message ?: "Unknown error")
@@ -35,7 +36,7 @@ class AuthRepositoryImpl @Inject constructor(
                 email = email,
                 password = password,
             )
-            val user = UserMapper.fromFirebase(fbUser)
+            val user = UserMapper.fromFirebase(fbUser,password)
             Resource.Success(user)
         } catch (e: Exception) {
             Resource.Error(e.message ?: "Login failed")

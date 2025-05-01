@@ -5,11 +5,12 @@ import com.gulsenurgunes.furfriends.domain.model.User
 
 object UserMapper {
     fun fromFirebase(
-        user: FirebaseUser
-    ): User {
-        return User(
-            uid = user.uid,
-            email = user.email ?: "",
-        )
-    }
+        user: FirebaseUser,
+        password: String
+    ): User = User(
+        uid      = user.uid,
+        name     = user.displayName.orEmpty(),
+        email    = user.email.orEmpty(),
+        password = password
+    )
 }

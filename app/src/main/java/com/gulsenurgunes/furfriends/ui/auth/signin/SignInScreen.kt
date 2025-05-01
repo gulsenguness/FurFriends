@@ -8,10 +8,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,67 +43,93 @@ fun SignInScreen(
     val email = signInViewModel.email
     val password = signInViewModel.password
     val uiState = signInViewModel.signInState
+    val snackbarHost = remember { SnackbarHostState() }
 
     LaunchedEffect(uiState) {
-        if (uiState is UIState.Success) {
-            onHomeClick()
+        when (uiState) {
+            is UIState.Success -> {
+                onHomeClick()
+                signInViewModel.resetState()
+            }
+
+            is UIState.Error -> {
+                val result = snackbarHost.showSnackbar(uiState.message)
+                if (result == SnackbarResult.Dismissed || result == SnackbarResult.ActionPerformed) {
+                    signInViewModel.resetState()
+                }
+            }
+
+            else -> {
+            }
         }
     }
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHost) }
+    ) { padding ->
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        HeaderImage(R.drawable.animal1, "Sign In Header Image")
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(3f)
-                .padding(horizontal = 24.dp),
-            verticalArrangement = Arrangement.SpaceEvenly,
-            horizontalAlignment = Alignment.Start
+            modifier = Modifier.fillMaxSize()
         ) {
-            ScreenHeader(
-                title = "Sign In To Your Account",
-                subtitle = "Welcome Back You've Been Missed"
-            )
-            Spacer(modifier = Modifier.height(24.dp))
-            LabeledTextField(
-                label = "Email Address *",
-                value = email,
-                onValueChange = { signInViewModel.onEmailChange(it) }
-            )
-            LabeledTextField(
-                label = "Password *",
-                value = password,
-                onValueChange = { signInViewModel.onPasswordChange(it) },
-                isPassword = true
-            )
-            TextButton(
-                onClick = { onForgotPasswordClick() },
-                modifier = Modifier.align(Alignment.End)
+            HeaderImage(R.drawable.animal1, "Sign In Header Image")
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(3f)
+                    .padding(horizontal = 24.dp),
+                verticalArrangement = Arrangement.SpaceEvenly,
+                horizontalAlignment = Alignment.Start
             ) {
-                Text("Forgot Password?")
+                ScreenHeader(
+                    title = "Sign In To Your Account",
+                    subtitle = "Welcome Back You've Been Missed"
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                LabeledTextField(
+                    label = "Email Address *",
+                    value = email,
+                    onValueChange = { signInViewModel.onEmailChange(it) },
+                    errorMessage = if (email.isBlank() && uiState is UIState.Error)
+                        "E-posta boş bırakılamaz"
+                    else null
+
+                )
+                LabeledTextField(
+                    label = "Password *",
+                    value = password,
+                    onValueChange = { signInViewModel.onPasswordChange(it) },
+                    isPassword = true,
+                    errorMessage = if (password.isBlank() && uiState is UIState.Error)
+                        "Parola boş bırakılamaz"
+                    else null
+
+                )
+                TextButton(
+                    onClick = { onForgotPasswordClick() },
+                    modifier = Modifier.align(Alignment.End)
+                ) {
+                    Text("Forgot Password?")
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                AuthButton(
+                    text = "Sign In",
+                    onClick = { signInViewModel.onSignInClick() },
+                    modifier = Modifier.fillMaxWidth(),
+                    containerColor = Color.Black,
+                    contentColor = Color.White,
+                    shape = RoundedCornerShape(12.dp),
+                    height = 48.dp,
+                    enabled = email.isNotBlank() && password.isNotBlank()
+                )
+                DividerWithText("Or Sign In With")
+                SocialIconsRow()
+                TextWithAction(
+                    text = "Not a member?",
+                    actionText = "Create an account",
+                    onActionClick = { onSignUpClick() })
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            AuthButton(
-                text = "Sign In",
-                onClick = { signInViewModel.onSignInClick() },
-                modifier = Modifier.fillMaxWidth(),
-                containerColor = Color.Black,
-                contentColor = Color.White,
-                shape = RoundedCornerShape(12.dp),
-                height = 48.dp
-            )
-            DividerWithText("Or Sign In With")
-            SocialIconsRow()
-            TextWithAction(
-                text = "Not a member?",
-                actionText = "Create an account",
-                onActionClick = { onSignUpClick() })
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
