@@ -23,7 +23,21 @@ class AuthRepositoryImpl @Inject constructor(
             val user = UserMapper.fromFirebase(fbUser)
             Resource.Success(user)
         } catch (e: Exception) {
-            Resource.Error(e.message ?: "Bilinmeyen hata")
+            Resource.Error(e.message ?: "Unknown error")
         }
 
+    override suspend fun signIn(
+        email: String,
+        password: String
+    ): Resource<User> =
+        try {
+            val fbUser = dataSource.signIn(
+                email = email,
+                password = password,
+            )
+            val user = UserMapper.fromFirebase(fbUser)
+            Resource.Success(user)
+        } catch (e: Exception) {
+            Resource.Error(e.message ?: "Login failed")
+        }
 }
