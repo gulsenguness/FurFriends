@@ -11,16 +11,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.gulsenurgunes.furfriends.R
+import com.gulsenurgunes.furfriends.common.UIState
 import com.gulsenurgunes.furfriends.ui.auth.components.AuthButton
 import com.gulsenurgunes.furfriends.ui.auth.components.DividerWithText
 import com.gulsenurgunes.furfriends.ui.auth.components.HeaderImage
@@ -28,19 +27,23 @@ import com.gulsenurgunes.furfriends.ui.auth.components.LabeledTextField
 import com.gulsenurgunes.furfriends.ui.auth.components.ScreenHeader
 import com.gulsenurgunes.furfriends.ui.auth.components.SocialIconsRow
 import com.gulsenurgunes.furfriends.ui.auth.components.TextWithAction
-import com.gulsenurgunes.furfriends.ui.auth.entercode.EnterCode
-import com.gulsenurgunes.furfriends.ui.auth.enternewpassword.EnterNewPassword
-import com.gulsenurgunes.furfriends.ui.auth.forgot.ForgotScreen
-import com.gulsenurgunes.furfriends.ui.auth.signup.SignUpScreen
 
 @Composable
 fun SignInScreen(
     onForgotPasswordClick: () -> Unit,
     onHomeClick: () -> Unit,
     onSignUpClick: () -> Unit,
+    signInViewModel: SignInViewModel = hiltViewModel()
 ) {
-    var email by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
+    val email = signInViewModel.email
+    val password = signInViewModel.password
+    val uiState = signInViewModel.signInState
+
+    LaunchedEffect(uiState) {
+        if (uiState is UIState.Success) {
+            onHomeClick()
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -62,12 +65,12 @@ fun SignInScreen(
             LabeledTextField(
                 label = "Email Address *",
                 value = email,
-                onValueChange = { email = it }
+                onValueChange = { signInViewModel.onEmailChange(it) }
             )
             LabeledTextField(
                 label = "Password *",
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = { signInViewModel.onPasswordChange(it) },
                 isPassword = true
             )
             TextButton(
@@ -79,7 +82,7 @@ fun SignInScreen(
             Spacer(modifier = Modifier.height(16.dp))
             AuthButton(
                 text = "Sign In",
-                onClick = onHomeClick,
+                onClick = { signInViewModel.onSignInClick() },
                 modifier = Modifier.fillMaxWidth(),
                 containerColor = Color.Black,
                 contentColor = Color.White,
@@ -101,29 +104,4 @@ fun SignInScreen(
 @Composable
 fun SignInPreview() {
     SignInScreen(onForgotPasswordClick = {}, onHomeClick = {}, onSignUpClick = {})
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SignUpPreview() {
-    SignUpScreen()
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun ForgotPreview() {
-    ForgotScreen()
-}
-
-@Preview(showBackground = true)
-@Composable
-fun EnterCodenPreview() {
-    EnterCode()
-}
-
-@Preview(showBackground = true)
-@Composable
-fun EnterNewPasswordPreview() {
-    EnterNewPassword()
 }

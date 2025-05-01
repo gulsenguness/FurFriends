@@ -3,8 +3,13 @@ package com.gulsenurgunes.furfriends.domain.repository
 import com.gulsenurgunes.furfriends.common.Resource
 import com.gulsenurgunes.furfriends.domain.model.User
 
-interface AuthRepository{
+interface AuthRepository {
     suspend fun signUp(
+        email: String,
+        password: String
+    ): Resource<User>
+
+    suspend fun signIn(
         email: String,
         password: String
     ): Resource<User>
