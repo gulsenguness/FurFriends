@@ -2,15 +2,10 @@ package com.gulsenurgunes.furfriends.data.mapper
 
 import com.google.firebase.auth.FirebaseUser
 import com.gulsenurgunes.furfriends.domain.model.User
+import com.gulsenurgunes.furfriends.component.toUserPassword
+
 
 object UserMapper {
-    fun fromFirebase(
-        user: FirebaseUser,
-        password: String
-    ): User = User(
-        uid      = user.uid,
-        name     = user.displayName.orEmpty(),
-        email    = user.email.orEmpty(),
-        password = password
-    )
+    fun map(user: FirebaseUser, password: String): User =
+        user.toUserPassword(password)
 }
