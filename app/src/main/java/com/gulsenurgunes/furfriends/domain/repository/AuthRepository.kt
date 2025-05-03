@@ -14,4 +14,9 @@ interface AuthRepository {
         email: String,
         password: String
     ): Resource<User>
+
+    suspend fun signInWithGoogle(
+        idToken: String
+    ): Resource<User>
+
 }

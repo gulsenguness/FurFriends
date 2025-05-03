@@ -1,5 +1,8 @@
 package com.gulsenurgunes.furfriends.ui.auth.signin
 
+import android.app.Activity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +26,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.common.api.ApiException
 import com.gulsenurgunes.furfriends.R
 import com.gulsenurgunes.furfriends.common.UIState
 import com.gulsenurgunes.furfriends.ui.auth.components.AuthButton
@@ -45,9 +50,29 @@ fun SignInScreen(
     val uiState = signInViewModel.signInState
     val snackbarHost = remember { SnackbarHostState() }
 
+    val googleLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+        onResult = { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.let { intent ->
+                    val task = GoogleSignIn.getSignedInAccountFromIntent(intent)
+                    try {
+                        val acct = task.getResult(ApiException::class.java)!!
+                        signInViewModel.firebaseAuthWithGoogle(acct.idToken!!)
+                    } catch (e: ApiException) {
+                        signInViewModel.signInState =
+                            UIState.Error("Google sign-in failed: ${e.localizedMessage}")
+                    }
+                }
+            }
+        }
+    )
+
+
     LaunchedEffect(uiState) {
         when (uiState) {
             is UIState.Success -> {
+                snackbarHost.showSnackbar("Giriş Başarılı")
                 onHomeClick()
                 signInViewModel.resetState()
             }
@@ -121,7 +146,11 @@ fun SignInScreen(
                     enabled = email.isNotBlank() && password.isNotBlank()
                 )
                 DividerWithText("Or Sign In With")
-                SocialIconsRow()
+                SocialIconsRow(
+                    onGoogleClick = { googleLauncher.launch(signInViewModel.getGoogleSignInIntent()) },
+                    onFacebookClick = { },
+                    onAppleClick = { }
+                )
                 TextWithAction(
                     text = "Not a member?",
                     actionText = "Create an account",

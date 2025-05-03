@@ -12,7 +12,20 @@
           "package_name": "com.gulsenurgunes.furfriends"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "240566561408-pr9jgfnr258ojl28h0t250bebsmu6q56.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gulsenurgunes.furfriends",
+            "certificate_hash": "4da9571317efcb7e5a3b8c61c61c8a29906fe02d"
+          }
+        },
+        {
+          "client_id": "240566561408-j3ah62pkgd7pi4fncm9qfg4eq3a5bnro.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCXb0jip7kCy_2fTIj_xGtr3lNJJhyg1gM"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "240566561408-j3ah62pkgd7pi4fncm9qfg4eq3a5bnro.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

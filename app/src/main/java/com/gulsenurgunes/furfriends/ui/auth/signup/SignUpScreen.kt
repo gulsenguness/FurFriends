@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -28,7 +27,6 @@ import com.gulsenurgunes.furfriends.ui.auth.components.LabeledTextField
 import com.gulsenurgunes.furfriends.ui.auth.components.ScreenHeader
 import com.gulsenurgunes.furfriends.ui.auth.components.SocialIconsRow
 import com.gulsenurgunes.furfriends.ui.auth.components.TextWithAction
-import java.lang.Error
 
 @Composable
 fun SignUpScreen(
@@ -47,12 +45,15 @@ fun SignUpScreen(
 
         when (signUpState) {
             is UIState.Success -> {
+                snackbarHost.showSnackbar("Kayıt yapıldı")
                 onSignUpSuccess((signUpState).user)
                 signUpViewModel.resetState()
             }
+
             is UIState.Error -> {
                 snackbarHost.showSnackbar((signUpState).message)
             }
+
             else -> {}
         }
 
@@ -108,7 +109,7 @@ fun SignUpScreen(
                     enabled = name.isNotBlank() && email.isNotBlank() && password.isNotBlank()
                 )
                 DividerWithText("Or Sign Up With")
-                SocialIconsRow()
+                SocialIconsRow(onGoogleClick = {})
                 TextWithAction(
                     text = "Already have and account? ",
                     actionText = "Sign In",

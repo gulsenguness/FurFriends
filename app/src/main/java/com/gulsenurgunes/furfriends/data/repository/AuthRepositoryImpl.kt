@@ -36,9 +36,21 @@ class AuthRepositoryImpl @Inject constructor(
                 email = email,
                 password = password,
             )
-            val user = UserMapper.map(fbUser,password)
+            val user = UserMapper.map(fbUser, password)
             Resource.Success(user)
         } catch (e: Exception) {
             Resource.Error(e.message ?: "Login failed")
         }
+
+    override suspend fun signInWithGoogle(
+        idToken: String
+    ): Resource<User> =
+        try {
+            val fbUser = dataSource.signInWithGoogle(idToken)
+            val user = UserMapper.map(fbUser, password = "google")
+            Resource.Success(user)
+        } catch (e: Exception) {
+            Resource.Error(e.message ?: "Google sign-in failed")
+        }
 }
+

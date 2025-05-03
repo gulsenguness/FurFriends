@@ -18,14 +18,15 @@ import com.gulsenurgunes.furfriends.R
 import com.gulsenurgunes.furfriends.ui.auth.model.SocialProvider
 
 @Composable
-fun SocialIconsRow() {
+fun SocialIconsRow(
+    onGoogleClick: () -> Unit,
+    onFacebookClick: () -> Unit = {},
+    onAppleClick: () -> Unit = {}
+) {
     val providers = listOf(
-        SocialProvider("Google", R.drawable.google) {
-        },
-        SocialProvider("Facebook", R.drawable.facebook) {
-        },
-        SocialProvider("Apple", R.drawable.apple) {
-        }
+        SocialProvider("Google", R.drawable.google, onGoogleClick),
+        SocialProvider("Facebook", R.drawable.facebook, onFacebookClick),
+        SocialProvider("Apple", R.drawable.apple, onAppleClick)
     )
     Row(
         modifier = Modifier
