@@ -1,6 +1,7 @@
 package com.gulsenurgunes.furfriends.data.repository
 
 import com.gulsenurgunes.furfriends.common.Resource
+import com.gulsenurgunes.furfriends.component.toUserPassword
 import com.gulsenurgunes.furfriends.data.datasource.AuthDataSource
 import com.gulsenurgunes.furfriends.data.mapper.UserMapper
 import com.gulsenurgunes.furfriends.domain.model.User
@@ -21,7 +22,7 @@ class AuthRepositoryImpl @Inject constructor(
                 email = email,
                 password = password,
             )
-            val user = UserMapper.map(fbUser, password)
+            val user = fbUser.toUserPassword(password)
             Resource.Success(user)
         } catch (e: Exception) {
             Resource.Error(e.message ?: "Unknown error")

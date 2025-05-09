@@ -22,7 +22,7 @@ class SignUpViewModel @Inject constructor(
         private set
     var name by mutableStateOf("")
         private set
-    var signUpState by mutableStateOf<UIState>(UIState.Idle)
+    var signUpState by mutableStateOf<UIState>(UIState.Loading(isLoading = true))
         private set
 
 
@@ -47,18 +47,18 @@ class SignUpViewModel @Inject constructor(
             return
         }
         viewModelScope.launch {
-            signUpState = UIState.Loading
+            signUpState = UIState.Loading(isLoading = true)
             signUpState = when (val res = signUpUseCase(name, email, password)) {
                 is Resource.Success ->
                     UIState.Success(res.data)
                 is Resource.Error ->
-                    UIState.Error(res.message ?: "Kayıt başarısız oldu.")
+                    UIState.Error(res.message)
             }
         }
     }
 
     fun resetState() {
-        signUpState = UIState.Idle
+        signUpState = UIState.Loading(isLoading = true)
     }
 
 }

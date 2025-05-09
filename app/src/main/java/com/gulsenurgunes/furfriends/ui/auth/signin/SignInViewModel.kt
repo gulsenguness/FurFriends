@@ -25,7 +25,7 @@ class SignInViewModel @Inject constructor(
         private set
     var password by mutableStateOf("")
         private set
-    var signInState by mutableStateOf<UIState>(UIState.Idle)
+    var signInState by mutableStateOf<UIState>(UIState.Loading(isLoading = true))
 
     fun onEmailChange(newEmail: String) {
         email = newEmail
@@ -37,18 +37,14 @@ class SignInViewModel @Inject constructor(
 
     fun onSignInClick() {
         if (email.isBlank() || password.isBlank()) {
-            signInState = UIState.Error("Email and password cannot be left blank.\n")
+            signInState = UIState.Error("Email and password cannot be left blank.")
             return
         }
         viewModelScope.launch {
-            signInState = UIState.Loading
+            signInState = UIState.Loading(isLoading = true)
             signInState = when (val res = signInUseCase(email, password)) {
-                is Resource.Success ->
-                    UIState.Success(res.data)
-
-                is Resource.Error -> {
-                    UIState.Error(res.message)
-                }
+                is Resource.Success -> UIState.Success(res.data)
+                is Resource.Error -> UIState.Error(res.message)
             }
         }
 
@@ -57,7 +53,7 @@ class SignInViewModel @Inject constructor(
     fun getGoogleSignInIntent(): Intent = googleSignInClient.signInIntent
 
     fun firebaseAuthWithGoogle(idToken: String) = viewModelScope.launch {
-        signInState = UIState.Loading
+        signInState = UIState.Loading(isLoading = true)
         signInState = when (val res = signInWithGoogleUseCase(idToken)) {
             is Resource.Success -> UIState.Success(res.data)
             is Resource.Error -> UIState.Error(res.message)
@@ -65,7 +61,6 @@ class SignInViewModel @Inject constructor(
     }
 
     fun resetState() {
-        signInState = UIState.Idle
+        signInState = UIState.Loading(isLoading = false)
     }
-
 }

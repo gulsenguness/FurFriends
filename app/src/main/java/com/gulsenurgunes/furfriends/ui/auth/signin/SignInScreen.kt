@@ -72,21 +72,18 @@ fun SignInScreen(
     LaunchedEffect(uiState) {
         when (uiState) {
             is UIState.Success -> {
-                snackbarHost.showSnackbar("Giriş Başarılı")
+                val user = (uiState).user
+                snackbarHost.showSnackbar("Hoşgeldin, ${user.name}!")
                 onHomeClick()
                 signInViewModel.resetState()
             }
-
             is UIState.Error -> {
-                val result = snackbarHost.showSnackbar(uiState.message)
-                if (result == SnackbarResult.Dismissed || result == SnackbarResult.ActionPerformed) {
-                    signInViewModel.resetState()
-                }
+                snackbarHost.showSnackbar((uiState).message)
+                signInViewModel.resetState()
             }
-
-            else -> {
-            }
+            else -> Unit
         }
+
     }
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHost) }
