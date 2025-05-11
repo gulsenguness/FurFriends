@@ -2,6 +2,8 @@ package com.gulsenurgunes.furfriends.di
 
 import android.content.Context
 import com.gulsenurgunes.furfriends.common.Constants.BASE_URL
+import com.gulsenurgunes.furfriends.data.source.remote.ApiService
+import com.gulsenurgunes.furfriends.data.repository.ConnectivityRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,8 +31,8 @@ object RetrofitModule {
         return retrofit.create(ApiService::class.java)
     }
 
-    @Provides
     @Singleton
+    @Provides
     fun provideConnectivityRepository(@ApplicationContext context: Context): ConnectivityRepository {
         return ConnectivityRepository(context)
     }
