@@ -1,4 +1,4 @@
-package com.gulsenurgunes.furfriends.domain.model
+package com.gulsenurgunes.furfriends.data.source.remote.model
 
 data class User(
     val uid:String,

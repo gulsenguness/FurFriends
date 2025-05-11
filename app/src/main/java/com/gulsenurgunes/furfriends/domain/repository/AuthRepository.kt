@@ -1,7 +1,7 @@
 package com.gulsenurgunes.furfriends.domain.repository
 
 import com.gulsenurgunes.furfriends.common.Resource
-import com.gulsenurgunes.furfriends.domain.model.User
+import com.gulsenurgunes.furfriends.data.source.remote.model.User
 
 interface AuthRepository {
     suspend fun signUp(

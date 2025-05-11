@@ -25,7 +25,7 @@ class SignInViewModel @Inject constructor(
         private set
     var password by mutableStateOf("")
         private set
-    var signInState by mutableStateOf<UIState>(UIState.Loading(isLoading = true))
+    var signInState by mutableStateOf<UIState<Any?>>(UIState.Loading(isLoading = true))
 
     fun onEmailChange(newEmail: String) {
         email = newEmail

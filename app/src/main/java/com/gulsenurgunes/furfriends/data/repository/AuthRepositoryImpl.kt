@@ -4,7 +4,7 @@ import com.gulsenurgunes.furfriends.common.Resource
 import com.gulsenurgunes.furfriends.component.toUserPassword
 import com.gulsenurgunes.furfriends.data.datasource.AuthDataSource
 import com.gulsenurgunes.furfriends.data.mapper.UserMapper
-import com.gulsenurgunes.furfriends.domain.model.User
+import com.gulsenurgunes.furfriends.data.source.remote.model.User
 import com.gulsenurgunes.furfriends.domain.repository.AuthRepository
 import javax.inject.Inject
 

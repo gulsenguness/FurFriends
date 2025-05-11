@@ -22,7 +22,7 @@ class SignUpViewModel @Inject constructor(
         private set
     var name by mutableStateOf("")
         private set
-    var signUpState by mutableStateOf<UIState>(UIState.Loading(isLoading = true))
+    var signUpState by mutableStateOf<UIState<Any?>>(UIState.Loading(isLoading = true))
         private set
 
 

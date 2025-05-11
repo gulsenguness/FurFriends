@@ -73,7 +73,6 @@ import com.gulsenurgunes.furfriends.navigation.TopBar
 fun HomeScreen(
     homeViewModel: HomeViewModel = viewModel()
 ) {
-    val uiState by homeViewModel.uiState.collectAsState()
 
     Scaffold(topBar = {
         TopBar(
@@ -106,30 +105,31 @@ fun HomeScreen(
                 .padding(padding),
             contentAlignment = Alignment.Center
         ) {
-            when (uiState) {
-                is UIState.Success -> Home()
-                is UIState.Loading -> {
-                    if ((uiState as UIState.Loading).isLoading) {
-                        CircularProgressIndicator()
-                    }
-                }
-
-                is UIState.Error -> {
-                    val message = (uiState as UIState.Error).message
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Bir hata oluştu:\n$message",
-                            color = Color.Red
-                        )
-                        Spacer(Modifier.height(12.dp))
-                        Button(onClick = { homeViewModel.retry() }) {
-                            Text("Tekrar Dene")
-                        }
-                    }
-                }
-            }
+            Home()
+//            when (uiState) {
+//                is UIState<Any?>.Success -> Home()
+//                is UIState<Any?>.Loading -> {
+//                    if ((uiState as UIState<Any?>.Loading).isLoading) {
+//                        CircularProgressIndicator()
+//                    }
+//                }
+//
+//                is UIState<>.Error -> {
+//                    val message = (uiState as UIState<Any?>.Error).message
+//                    Column(
+//                        horizontalAlignment = Alignment.CenterHorizontally
+//                    ) {
+//                        Text(
+//                            text = "Bir hata oluştu:\n$message",
+//                            color = Color.Red
+//                        )
+//                        Spacer(Modifier.height(12.dp))
+//                        Button(onClick = { homeViewModel.retry() }) {
+//                            Text("Tekrar Dene")
+//                        }
+//                    }
+//                }
+//            }
         }
     }
 }
@@ -146,6 +146,7 @@ fun Home() {
         Section()
 
         CategoryGrid(
+            text = "Find Best Category",
             categories = listOf(
                 Category("Dogs", R.drawable.dogs),
                 Category("Cats", R.drawable.cats),
@@ -208,7 +209,7 @@ fun Section() {
 }
 
 @Composable
-fun CategoryGrid(categories: List<Category>, onClick: (Category) -> Unit) {
+fun CategoryGrid(text:String,categories: List<Category>, onClick: (Category) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -217,7 +218,7 @@ fun CategoryGrid(categories: List<Category>, onClick: (Category) -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Find Best Category",
+            text = text,
             fontSize = 24.sp,
             fontWeight = FontWeight.Medium
         )

@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gulsenurgunes.furfriends.R
 import com.gulsenurgunes.furfriends.common.UIState
-import com.gulsenurgunes.furfriends.domain.model.User
+import com.gulsenurgunes.furfriends.data.source.remote.model.User
 import com.gulsenurgunes.furfriends.ui.auth.components.AuthButton
 import com.gulsenurgunes.furfriends.ui.auth.components.DividerWithText
 import com.gulsenurgunes.furfriends.ui.auth.components.HeaderImage
