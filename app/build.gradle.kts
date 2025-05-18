@@ -82,5 +82,8 @@ dependencies {
 
     implementation(libs.coil.compose)
 
+    implementation(libs.logging.interceptor)
+
+
 
 }

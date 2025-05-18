@@ -1,15 +1,12 @@
 package com.gulsenurgunes.furfriends.ui.home
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,10 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,20 +25,16 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -63,12 +52,13 @@ import com.gulsenurgunes.furfriends.R
 import com.gulsenurgunes.furfriends.navigation.TopBar
 import com.gulsenurgunes.furfriends.ui.components.CategoryGrid
 import com.gulsenurgunes.furfriends.ui.components.CategoryImage
+import com.gulsenurgunes.furfriends.ui.components.DividerC
 
 @Composable
 fun HomeScreen(
     homeViewModel: HomeViewModel = viewModel()
 ) {
-
+    val uiState by homeViewModel.uiState.collectAsState()
     Scaffold(topBar = {
         TopBar(
             title = {
@@ -100,31 +90,29 @@ fun HomeScreen(
                 .padding(padding),
             contentAlignment = Alignment.Center
         ) {
-            Home()
-//            when (uiState) {
-//                is UIState<Any?>.Success -> Home()
-//                is UIState<Any?>.Loading -> {
-//                    if ((uiState as UIState<Any?>.Loading).isLoading) {
-//                        CircularProgressIndicator()
-//                    }
-//                }
-//
-//                is UIState<>.Error -> {
-//                    val message = (uiState as UIState<Any?>.Error).message
-//                    Column(
-//                        horizontalAlignment = Alignment.CenterHorizontally
-//                    ) {
-//                        Text(
-//                            text = "Bir hata oluştu:\n$message",
-//                            color = Color.Red
-//                        )
-//                        Spacer(Modifier.height(12.dp))
-//                        Button(onClick = { homeViewModel.retry() }) {
-//                            Text("Tekrar Dene")
-//                        }
-//                    }
-//                }
-//            }
+            when {
+                uiState.isLoading -> {
+                    CircularProgressIndicator()
+                }
+
+                uiState.errorMessage != null -> {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = uiState.errorMessage!!,
+                            color = MaterialTheme.colorScheme.error,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(Modifier.height(12.dp))
+                        Button(onClick = { homeViewModel.onAction(HomeContract.UiAction.LoadHome) }) {
+                            Text("Tekrar Dene")
+                        }
+                    }
+                }
+
+                else -> {
+                    Home()
+                }
+            }
         }
     }
 }
@@ -132,14 +120,12 @@ fun HomeScreen(
 @Composable
 fun Home() {
     val scrollState = rememberScrollState()
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
     ) {
         Section()
-
         CategoryGrid(
             text = "Find Best Category",
             categories = listOf(
@@ -151,12 +137,10 @@ fun Home() {
             onClick = {},
             showIcon = true
         )
-
         PetGrooming()
         Video()
         DividerC()
         Food()
-        Product()
         MiddleImages()
         Comment()
     }
@@ -203,8 +187,6 @@ fun Section() {
         }
     }
 }
-
-
 
 @Composable
 fun PetGrooming() {
@@ -350,108 +332,6 @@ fun Video() {
     }
 }
 
-@Composable
-fun DividerC() {
-    HorizontalDivider(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        thickness = 1.dp,
-        color = Color.Gray
-    )
-}
-
-@Composable
-fun Food() {
-    Column {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Reliable Healthy Food\n For Your Pet",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Medium
-            )
-            Text(
-                text = "See All",
-            )
-        }
-        val items = listOf("Dogs Food", "Cats Food", "Rabbits Food", "Parrot Food")
-        var selectedItem by remember { mutableStateOf<String?>(null) }
-
-        LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(horizontal = 8.dp)
-        ) {
-            items(items) { item ->
-                val isSelected = item == selectedItem
-                OutlinedButton(
-                    onClick = {
-                        selectedItem = if (isSelected) null else item
-                    },
-                    modifier = Modifier
-                        .height(40.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    border = BorderStroke(1.dp, Color.Black),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = if (isSelected) Color.Black else Color.White,
-                        contentColor = if (isSelected) Color.White else Color.Black
-                    )
-                ) {
-                    Text(
-                        text = item,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-
-            }
-        }
-    }
-}
-
-@Composable
-fun Product() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(320.dp)
-            .padding(16.dp)
-            .background(Color(0xFFF5F5F5), shape = RoundedCornerShape(16.dp))
-    ) {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            content = {
-                items(4) { index ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(1f),
-                        shape = RoundedCornerShape(8.dp),
-                    ) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(text = "Kart ${index + 1}")
-                        }
-                    }
-                }
-            }
-        )
-    }
-}
 
 @Composable
 fun MiddleImages(

@@ -1,7 +1,9 @@
 package com.gulsenurgunes.furfriends.di
 
 import com.gulsenurgunes.furfriends.data.repository.CategoryRepositoryImpl
+import com.gulsenurgunes.furfriends.data.repository.ProductRepositoryImpl
 import com.gulsenurgunes.furfriends.domain.repository.CategoryRepository
+import com.gulsenurgunes.furfriends.domain.repository.ProductRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -17,4 +19,12 @@ abstract class RepositoryModule {
     abstract fun bindCategoryRepository(
         impl: CategoryRepositoryImpl
     ): CategoryRepository
+
+
+    @Binds
+    @Singleton
+    abstract fun provideProductRepository(
+        impl: ProductRepositoryImpl
+    ): ProductRepository
+
 }

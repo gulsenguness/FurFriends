@@ -5,5 +5,5 @@ import com.gulsenurgunes.furfriends.data.source.remote.model.ProductDto
 
 data class ProductListDto(
     @SerializedName("products")
-    val productDto: List<ProductDto>
+    val products: List<ProductDto>
 ) : BaseResponse()
