@@ -26,4 +26,15 @@ class ProductRepositoryImpl @Inject constructor(
             Resource.Error(e.localizedMessage ?: "Ürünler yüklenirken hata oluştu")
         }
     }
+
+    override suspend fun getAllProducts(store: String): Resource<List<ProductUi>> {
+        return try {
+            val resp = api.getProducts(store)
+            val list = resp.products
+                .mapNotNull { it.mapToProductUi() }
+            Resource.Success(list)
+        } catch (e: Exception) {
+            Resource.Error(e.localizedMessage ?: "Ürünler yüklenirken hata oluştu")
+        }    }
+
 }
