@@ -3,7 +3,9 @@ package com.gulsenurgunes.furfriends.data.mapper
 import com.gulsenurgunes.furfriends.data.source.remote.model.CategoryDto
 import com.gulsenurgunes.furfriends.data.source.remote.model.ProductDetail
 import com.gulsenurgunes.furfriends.data.source.remote.model.ProductDto
+import com.gulsenurgunes.furfriends.data.source.remote.model.response.BaseResponse
 import com.gulsenurgunes.furfriends.domain.model.Category
+import com.gulsenurgunes.furfriends.domain.model.FavoriteResponse
 import com.gulsenurgunes.furfriends.domain.model.ProductUi
 
 
@@ -50,3 +52,9 @@ fun CategoryDto.toDomain(): Category =
         imageUrl = this.imageUrl.orEmpty()
     )
 
+fun BaseResponse.toFavoriteResponse(): FavoriteResponse {
+    return FavoriteResponse(
+        message = message.orEmpty(),
+        status = status ?: -1
+    )
+}
