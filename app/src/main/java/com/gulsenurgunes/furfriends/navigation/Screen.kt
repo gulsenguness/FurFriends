@@ -13,5 +13,8 @@ sealed class Screen(val route: String) {
     data object MyCart : Screen("mycart")
     data object Category : Screen("category")
     data object Profile : Screen("profile")
+    data object CategoryGroup : Screen("category_group/{categoryKey}") {
+        fun createRoute(categoryKey: String) = "category_group/$categoryKey"
+    }
 }
 

@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -47,7 +48,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.gulsenurgunes.furfriends.R
 import com.gulsenurgunes.furfriends.navigation.TopBar
 import com.gulsenurgunes.furfriends.ui.components.CategoryGrid
@@ -56,7 +57,7 @@ import com.gulsenurgunes.furfriends.ui.components.DividerC
 
 @Composable
 fun HomeScreen(
-    homeViewModel: HomeViewModel = viewModel()
+    homeViewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by homeViewModel.uiState.collectAsState()
     Scaffold(topBar = {
@@ -129,10 +130,10 @@ fun Home() {
         CategoryGrid(
             text = "Find Best Category",
             categories = listOf(
-                CategoryImage("Dogs", R.drawable.dogs),
-                CategoryImage("Cats", R.drawable.cats),
-                CategoryImage("Rabbits", R.drawable.rabbits),
-                CategoryImage("Parrot", R.drawable.parrot)
+                CategoryImage("Dogs", R.drawable.dogs, key = "Dogs"),
+                CategoryImage("Cats", R.drawable.cats, key = "Cats"),
+                CategoryImage("Rabbits", R.drawable.rabbits, key = "Rabbits"),
+                CategoryImage("Parrot", R.drawable.parrot, key = "Parrot")
             ),
             onClick = {},
             showIcon = true
@@ -175,7 +176,10 @@ fun Section() {
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(Modifier.height(8.dp))
-                Button(onClick = {}) { Text("Adopt A Pet") }
+                Button(
+                    onClick = {},
+                    colors = ButtonDefaults.buttonColors(Color.Black)
+                ) { Text("Adopt A Pet") }
             }
             Image(
                 painter = painterResource(R.drawable.splash),

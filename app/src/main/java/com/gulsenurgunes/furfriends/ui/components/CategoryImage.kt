@@ -1,3 +1,3 @@
 package com.gulsenurgunes.furfriends.ui.components
 
-data class CategoryImage(val title: String, val imageRes: Int)
+data class CategoryImage(val title: String, val imageRes: Int, val key:String)

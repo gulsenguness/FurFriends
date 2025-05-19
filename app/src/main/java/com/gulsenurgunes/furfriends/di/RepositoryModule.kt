@@ -1,11 +1,14 @@
 package com.gulsenurgunes.furfriends.di
 
 import com.gulsenurgunes.furfriends.data.repository.CategoryRepositoryImpl
+import com.gulsenurgunes.furfriends.data.repository.FavoriteRepositoryImpl
 import com.gulsenurgunes.furfriends.data.repository.ProductRepositoryImpl
 import com.gulsenurgunes.furfriends.domain.repository.CategoryRepository
+import com.gulsenurgunes.furfriends.domain.repository.FavoriteRepository
 import com.gulsenurgunes.furfriends.domain.repository.ProductRepository
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
@@ -27,4 +30,9 @@ abstract class RepositoryModule {
         impl: ProductRepositoryImpl
     ): ProductRepository
 
+    @Binds
+    @Singleton
+    abstract fun bindFavoriteRepository(
+        impl: FavoriteRepositoryImpl
+    ): FavoriteRepository
 }

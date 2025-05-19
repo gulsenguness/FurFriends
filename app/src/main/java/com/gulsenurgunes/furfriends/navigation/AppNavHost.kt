@@ -6,11 +6,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.gulsenurgunes.furfriends.domain.model.ProductUi
 import com.gulsenurgunes.furfriends.ui.auth.entercode.EnterCode
 import com.gulsenurgunes.furfriends.ui.auth.enternewpassword.EnterNewPassword
 import com.gulsenurgunes.furfriends.ui.auth.forgot.ForgotScreen
@@ -18,6 +21,7 @@ import com.gulsenurgunes.furfriends.ui.auth.signin.SignInScreen
 import com.gulsenurgunes.furfriends.ui.auth.signup.SignUpScreen
 import com.gulsenurgunes.furfriends.ui.auth.splash.PageOne
 import com.gulsenurgunes.furfriends.ui.auth.splash.PageTwo
+import com.gulsenurgunes.furfriends.ui.category.CategoryGroup
 import com.gulsenurgunes.furfriends.ui.category.CategoryScreen
 import com.gulsenurgunes.furfriends.ui.favorites.FavoritesScreen
 import com.gulsenurgunes.furfriends.ui.home.HomeScreen
@@ -34,7 +38,7 @@ fun AppNavHost(
     val currentRoute = navBackStack?.destination?.route
     Scaffold(
         bottomBar = {
-            if (currentRoute in bottomTabs.map { it.route }){
+            if (currentRoute in bottomTabs.map { it.route }) {
                 BottomNavigationBar(navController, currentRoute!!)
             }
         }
@@ -114,10 +118,28 @@ fun AppNavHost(
                     MyCartScreen()
                 }
                 composable(Screen.Category.route) {
-                    CategoryScreen()
+                    CategoryScreen(navController)
                 }
                 composable(Screen.Profile.route) {
                     ProfileScreen()
+                }
+                composable(
+                    route = Screen.CategoryGroup.route,
+                    arguments = listOf(
+                        navArgument("categoryKey") {
+                            type = NavType.StringType
+                        }
+                    )
+                ) { backStackEntry ->
+                    val key = backStackEntry
+                        .arguments
+                        ?.getString("categoryKey")
+                        .orEmpty()
+
+                    CategoryGroup(
+                        navController = navController,
+                        categoryKey   = key,
+                    )
                 }
             }
         }

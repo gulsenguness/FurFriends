@@ -4,6 +4,7 @@ import android.content.Context
 import com.gulsenurgunes.furfriends.common.Constants.BASE_URL
 import com.gulsenurgunes.furfriends.data.source.remote.ApiService
 import com.gulsenurgunes.furfriends.data.repository.ConnectivityRepository
+import com.gulsenurgunes.furfriends.domain.repository.FavoriteRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

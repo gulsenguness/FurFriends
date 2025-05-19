@@ -18,12 +18,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.gulsenurgunes.furfriends.R
+import com.gulsenurgunes.furfriends.navigation.Screen
 import com.gulsenurgunes.furfriends.navigation.TopBar
 import com.gulsenurgunes.furfriends.ui.components.CategoryGrid
 import com.gulsenurgunes.furfriends.ui.components.CategoryImage
@@ -31,14 +35,15 @@ import com.gulsenurgunes.furfriends.ui.components.Tittle
 
 @Composable
 fun CategoryScreen(
+    navController: NavController,
     viewModel: CategoryViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
     val staticCategories = listOf(
-        CategoryImage("Dogs", R.drawable.dogs),
-        CategoryImage("Cats", R.drawable.cats),
-        CategoryImage("Rabbits", R.drawable.rabbits),
-        CategoryImage("Parrot", R.drawable.parrot),
+        CategoryImage("Dogs", R.drawable.dogs, key = "Dogs"),
+        CategoryImage("Cats", R.drawable.cats, key = "Cats"),
+        CategoryImage("Rabbits", R.drawable.rabbits, key = "Rabbits"),
+        CategoryImage("Parrot", R.drawable.parrot, key = "Parrot"),
     )
     Scaffold(
         topBar = {
@@ -70,7 +75,9 @@ fun CategoryScreen(
                 CategoryGrid(
                     text = "",
                     categories = staticCategories,
-                    onClick = {},
+                    onClick = { category ->
+                        navController.navigate(Screen.CategoryGroup.createRoute(category.key))
+                    },
                     showIcon = false
                 )
             }
@@ -116,5 +123,6 @@ fun CategoryScreen(
 @Preview(showBackground = true)
 @Composable
 fun CategoryPreview() {
-    CategoryScreen()
+    val navController = rememberNavController()
+    CategoryScreen(navController = navController)
 }

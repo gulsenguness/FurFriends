@@ -48,7 +48,7 @@ class FoodViewModel @Inject constructor(
     private fun loadAllFood() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-            when (val res = getProductsByCategoryUseCase("FurFriends", "Food")) {
+            when (val res = getProductsByCategoryUseCase("FurFriends", "Nutrients")) {
                 is Resource.Success -> {
                     val list = res.data
                     _uiState.update {
