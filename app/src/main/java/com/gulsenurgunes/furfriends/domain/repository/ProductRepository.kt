@@ -8,4 +8,5 @@ interface ProductRepository {
         store: String,
         category: String
     ): Resource<List<ProductUi>>
+    suspend fun getAllProducts(store: String): Resource<List<ProductUi>>
 }
