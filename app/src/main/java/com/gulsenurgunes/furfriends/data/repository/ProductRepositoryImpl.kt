@@ -1,7 +1,9 @@
 package com.gulsenurgunes.furfriends.data.repository
 
 import com.gulsenurgunes.furfriends.common.Resource
+import com.gulsenurgunes.furfriends.common.mapResource
 import com.gulsenurgunes.furfriends.data.mapper.mapToProductUi
+import com.gulsenurgunes.furfriends.data.safeApiCall
 import com.gulsenurgunes.furfriends.data.source.remote.ApiService
 import com.gulsenurgunes.furfriends.domain.model.ProductUi
 import com.gulsenurgunes.furfriends.domain.repository.ProductRepository
@@ -14,27 +16,20 @@ class ProductRepositoryImpl @Inject constructor(
     override suspend fun getProductByCategory(
         store: String,
         category: String
-    ): Resource<List<ProductUi>> {
-        return try {
-            val resp = api.getProductsByCategory(store, category)
-            val list = resp.products
-                .mapNotNull {
-                    it.mapToProductUi()
-                }
-            Resource.Success(list)
-        } catch (e: Exception) {
-            Resource.Error(e.localizedMessage ?: "Ürünler yüklenirken hata oluştu")
+    ): Resource<List<ProductUi>> =
+        safeApiCall {
+            api.getProductsByCategory(store, category)
+        }.mapResource { dto ->
+            dto.products.mapNotNull { it.mapToProductUi() }
         }
-    }
 
-    override suspend fun getAllProducts(store: String): Resource<List<ProductUi>> {
-        return try {
-            val resp = api.getProducts(store)
-            val list = resp.products
-                .mapNotNull { it.mapToProductUi() }
-            Resource.Success(list)
-        } catch (e: Exception) {
-            Resource.Error(e.localizedMessage ?: "Ürünler yüklenirken hata oluştu")
-        }    }
+    override suspend fun getAllProducts(
+        store: String
+    ): Resource<List<ProductUi>> =
+        safeApiCall {
+            api.getProducts(store)
+        }.mapResource { dto ->
+            dto.products.mapNotNull { it.mapToProductUi() }
+        }
 
 }

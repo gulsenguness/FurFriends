@@ -29,7 +29,6 @@ class CategoryViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             when (val res = getCategories(store)) {
                 is Resource.Success -> _uiState.update {
-                    Log.d("CatVM", "Got categories: ${res.data.map { it.imageUrl }}")
                     it.copy(
                         categoryList = res.data,
                         isLoading    = false

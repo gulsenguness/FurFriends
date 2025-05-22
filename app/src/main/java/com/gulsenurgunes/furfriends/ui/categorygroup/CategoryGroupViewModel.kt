@@ -1,4 +1,4 @@
-package com.gulsenurgunes.furfriends.ui.category
+package com.gulsenurgunes.furfriends.ui.categorygroup
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle

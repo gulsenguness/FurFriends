@@ -12,14 +12,14 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gulsenurgunes.furfriends.R
-import com.gulsenurgunes.furfriends.common.UIState
-import com.gulsenurgunes.furfriends.data.source.remote.model.User
 import com.gulsenurgunes.furfriends.ui.auth.components.AuthButton
 import com.gulsenurgunes.furfriends.ui.auth.components.DividerWithText
 import com.gulsenurgunes.furfriends.ui.auth.components.HeaderImage
@@ -30,33 +30,22 @@ import com.gulsenurgunes.furfriends.ui.auth.components.TextWithAction
 
 @Composable
 fun SignUpScreen(
-    onSignUpSuccess: (User) -> Unit = {},
+    onNavigateHome: () -> Unit,
     onSignInClick: () -> Unit = {},
     signUpViewModel: SignUpViewModel = hiltViewModel()
 ) {
-
-    val email = signUpViewModel.email
-    val password = signUpViewModel.password
-    val name = signUpViewModel.name
-    val signUpState = signUpViewModel.signUpState
+    val uiState by signUpViewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHost = remember { SnackbarHostState() }
 
-    LaunchedEffect(signUpState) {
-
-        when (signUpState) {
-            is UIState.Success -> {
-                snackbarHost.showSnackbar("Kayıt yapıldı")
-                onSignUpSuccess((signUpState).user)
-                signUpViewModel.resetState()
+    LaunchedEffect(Unit) {
+        signUpViewModel.uiEffect.collect { eff ->
+            when (eff) {
+                SignUpContract.UiEffect.ShowSuccess      -> snackbarHost.showSnackbar("Kayıt başarılı 🎉")
+                is SignUpContract.UiEffect.ShowError     -> snackbarHost.showSnackbar(eff.msg)
+                SignUpContract.UiEffect.GoToMainScreen   -> onNavigateHome()
             }
 
-            is UIState.Error -> {
-                snackbarHost.showSnackbar((signUpState).message)
-            }
-
-            else -> {}
         }
-
     }
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHost) }
@@ -84,29 +73,36 @@ fun SignUpScreen(
                 Spacer(modifier = Modifier.height(24.dp))
                 LabeledTextField(
                     label = "Name *",
-                    value = name,
-                    onValueChange = { signUpViewModel.onNameChange(it) },
-                    errorMessage = if (name.isBlank() && signUpState is UIState.Error) "İsim boş bırakılamaz" else null
+                    value = uiState.name,
+                    onValueChange = {
+                        signUpViewModel.onAction(SignUpContract.UiAction.ChangeName(it))
+                    },
+                    errorMessage = if (uiState.showNameError) "İsim boş bırakılamaz" else null
                 )
                 LabeledTextField(
                     label = "Email Address *",
-                    value = email,
-                    onValueChange = { signUpViewModel.onEmailChange(it) },
-                    errorMessage = if (email.isBlank() && signUpState is UIState.Error) "E-posta boş bırakılamaz" else null
+                    value = uiState.email,
+                    onValueChange = {
+                        signUpViewModel.onAction(SignUpContract.UiAction.ChangeEmail(it))
+                    },
+                    errorMessage = if (uiState.showEmailError) "E-posta boş bırakılamaz" else null
                 )
+
                 LabeledTextField(
                     label = "Password *",
-                    value = password,
-                    onValueChange = { signUpViewModel.onPasswordChange(it) },
+                    value = uiState.password,
+                    onValueChange = {
+                        signUpViewModel.onAction(SignUpContract.UiAction.ChangePassword(it))
+                    },
                     isPassword = true,
-                    errorMessage = if (password.isBlank() && signUpState is UIState.Error) "Password boş bırakılamaz" else null
+                    errorMessage = if (uiState.showPasswordError) "Parola boş bırakılamaz" else null
                 )
+
                 CheckboxConditions()
                 AuthButton(
                     text = "Sign Up",
-                    onClick = { signUpViewModel.onSignUpClick() },
+                    onClick = { signUpViewModel.onAction(SignUpContract.UiAction.SignUpClick) },
                     modifier = Modifier.padding(top = 16.dp),
-                    enabled = name.isNotBlank() && email.isNotBlank() && password.isNotBlank()
                 )
                 DividerWithText("Or Sign Up With")
                 SocialIconsRow(onGoogleClick = {})
@@ -116,6 +112,12 @@ fun SignUpScreen(
                     onActionClick = onSignInClick
                 )
             }
+        }
+    }
+    uiState.signUpError.takeIf { it.isNotBlank() }?.let { msg ->
+        LaunchedEffect(msg) {
+            snackbarHost.showSnackbar(msg)
+            signUpViewModel.onAction(SignUpContract.UiAction.ClearError)
         }
     }
 }

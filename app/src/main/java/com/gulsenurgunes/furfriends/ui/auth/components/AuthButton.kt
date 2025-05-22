@@ -32,7 +32,8 @@ fun AuthButton(
         shape = shape,
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
-            contentColor = contentColor
+            contentColor = contentColor,
+            disabledContainerColor = containerColor,
         ),
         enabled = enabled
     ) {

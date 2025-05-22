@@ -13,7 +13,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.gulsenurgunes.furfriends.domain.model.ProductUi
 import com.gulsenurgunes.furfriends.ui.auth.entercode.EnterCode
 import com.gulsenurgunes.furfriends.ui.auth.enternewpassword.EnterNewPassword
 import com.gulsenurgunes.furfriends.ui.auth.forgot.ForgotScreen
@@ -21,7 +20,7 @@ import com.gulsenurgunes.furfriends.ui.auth.signin.SignInScreen
 import com.gulsenurgunes.furfriends.ui.auth.signup.SignUpScreen
 import com.gulsenurgunes.furfriends.ui.auth.splash.PageOne
 import com.gulsenurgunes.furfriends.ui.auth.splash.PageTwo
-import com.gulsenurgunes.furfriends.ui.category.CategoryGroup
+import com.gulsenurgunes.furfriends.ui.categorygroup.CategoryGroup
 import com.gulsenurgunes.furfriends.ui.category.CategoryScreen
 import com.gulsenurgunes.furfriends.ui.favorites.FavoritesScreen
 import com.gulsenurgunes.furfriends.ui.home.HomeScreen
@@ -87,7 +86,7 @@ fun AppNavHost(
                 }
                 composable(Screen.SignUp.route) {
                     SignUpScreen(
-                        onSignUpSuccess = {
+                        onNavigateHome = {
                             navController.navigate(Screen.SignIn.route) {
                                 popUpTo(Screen.SignUp.route) { inclusive = true }
                             }

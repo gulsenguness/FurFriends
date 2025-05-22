@@ -32,10 +32,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -60,31 +64,24 @@ fun HomeScreen(
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by homeViewModel.uiState.collectAsState()
-    Scaffold(topBar = {
-        TopBar(
-            title = {
-                Image(
-                    painter = painterResource(R.drawable.first),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(32.dp)
-                        .clip(CircleShape)
-                )
-                Spacer(Modifier.width(8.dp))
-                Text("Hello, Gülşen Güneş")
-            },
-            actions = {
-                IconButton(onClick = {}) {
-                    BadgedBox(badge = { Badge { Text("2") } }) {
-                        Icon(Icons.Default.Notifications, contentDescription = "Bildirimler")
-                    }
-                }
-                IconButton(onClick = { }) {
-                    Icon(Icons.Default.Search, contentDescription = "Ara")
-                }
+    val snackHost = remember { SnackbarHostState() }
+    LaunchedEffect(Unit) {
+        homeViewModel.effect.collect { eff ->
+            when (eff) {
+                is HomeContract.UiEffect.ShowError       ->
+                    snackHost.showSnackbar(eff.message)
+
+                is HomeContract.UiEffect.CategoryClick -> TODO()
+                is HomeContract.UiEffect.ProductCartClick -> TODO()
+                HomeContract.UiEffect.SearchClick -> TODO()
             }
-        )
-    }) { padding ->
+        }
+    }
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackHost) },
+        topBar = { HomeTopBar { homeViewModel.onAction(HomeContract.UiAction.LoadHome) } }
+    ) { padding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -92,28 +89,16 @@ fun HomeScreen(
             contentAlignment = Alignment.Center
         ) {
             when {
-                uiState.isLoading -> {
-                    CircularProgressIndicator()
-                }
+                uiState.isLoading -> CircularProgressIndicator()
 
-                uiState.errorMessage != null -> {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = uiState.errorMessage!!,
-                            color = MaterialTheme.colorScheme.error,
-                            textAlign = TextAlign.Center
-                        )
-                        Spacer(Modifier.height(12.dp))
-                        Button(onClick = { homeViewModel.onAction(HomeContract.UiAction.LoadHome) }) {
-                            Text("Tekrar Dene")
-                        }
+                uiState.errorMessage != null ->
+                    ErrorSection(uiState.errorMessage!!) {
+                        homeViewModel.onAction(HomeContract.UiAction.LoadHome)
                     }
-                }
 
-                else -> {
-                    Home()
-                }
+                else -> Home()
             }
+
         }
     }
 }
@@ -144,6 +129,42 @@ fun Home() {
         Food()
         MiddleImages()
         Comment()
+    }
+}
+
+@Composable
+private fun HomeTopBar(onSearch: () -> Unit) = TopBar(
+    title = {
+        Image(
+            painterResource(R.drawable.first),
+            contentDescription = null,
+            modifier = Modifier.size(32.dp).clip(CircleShape)
+        )
+        Spacer(Modifier.width(8.dp))
+        Text("Hello, Gülşen Güneş")
+    },
+    actions = {
+        IconButton(onClick = {  }) {
+            BadgedBox(badge = { Badge { Text("2") } }) {
+                Icon(Icons.Default.Notifications, contentDescription = null)
+            }
+        }
+        IconButton(onClick = onSearch) {
+            Icon(Icons.Default.Search, contentDescription = "Ara")
+        }
+    }
+)
+
+@Composable
+private fun ErrorSection(msg: String, onRetry: () -> Unit) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            msg,
+            color = MaterialTheme.colorScheme.error,
+            textAlign = TextAlign.Center
+        )
+        Spacer(Modifier.height(12.dp))
+        Button(onClick = onRetry) { Text("Tekrar Dene") }
     }
 }
 

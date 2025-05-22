@@ -1,6 +1,5 @@
 package com.gulsenurgunes.furfriends.ui.auth.signin
 
-import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -14,11 +13,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,10 +25,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.common.api.ApiException
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gulsenurgunes.furfriends.R
-import com.gulsenurgunes.furfriends.common.UIState
 import com.gulsenurgunes.furfriends.ui.auth.components.AuthButton
 import com.gulsenurgunes.furfriends.ui.auth.components.DividerWithText
 import com.gulsenurgunes.furfriends.ui.auth.components.HeaderImage
@@ -45,45 +42,30 @@ fun SignInScreen(
     onSignUpClick: () -> Unit,
     signInViewModel: SignInViewModel = hiltViewModel()
 ) {
-    val email = signInViewModel.email
-    val password = signInViewModel.password
-    val uiState = signInViewModel.signInState
+
+    val uiState by signInViewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHost = remember { SnackbarHostState() }
 
-    val googleLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult(),
-        onResult = { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                result.data?.let { intent ->
-                    val task = GoogleSignIn.getSignedInAccountFromIntent(intent)
-                    try {
-                        val acct = task.getResult(ApiException::class.java)!!
-                        signInViewModel.firebaseAuthWithGoogle(acct.idToken!!)
-                    } catch (e: ApiException) {
-                        signInViewModel.signInState =
-                            UIState.Error("Google sign-in failed: ${e.localizedMessage}")
-                    }
-                }
+
+    LaunchedEffect(Unit) {
+        signInViewModel.uiEffect.collect { eff ->
+            when (eff) {
+                SignInContract.UiEffect.GoHome      -> onHomeClick()
+                SignInContract.UiEffect.ShowSuccess -> snackbarHost.showSnackbar("Hoş geldin 🎉")
+                is SignInContract.UiEffect.ShowError-> snackbarHost.showSnackbar(eff.msg)
             }
         }
-    )
+    }
 
-
-    LaunchedEffect(uiState) {
-        when (uiState) {
-            is UIState.Success -> {
-                val user = (uiState).user
-                snackbarHost.showSnackbar("Hoşgeldin, ${user.name}!")
-                onHomeClick()
-                signInViewModel.resetState()
+    uiState.googleIntent?.let { intent ->
+        val launcher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartActivityForResult()
+        ) { res ->
+            res.data?.let {
+                signInViewModel.onAction(SignInContract.UiAction.GoogleSignInResult(it))
             }
-            is UIState.Error -> {
-                snackbarHost.showSnackbar((uiState).message)
-                signInViewModel.resetState()
-            }
-            else -> Unit
         }
-
+        LaunchedEffect(intent) { launcher.launch(intent) }
     }
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHost) }
@@ -108,22 +90,20 @@ fun SignInScreen(
                 Spacer(modifier = Modifier.height(24.dp))
                 LabeledTextField(
                     label = "Email Address *",
-                    value = email,
-                    onValueChange = { signInViewModel.onEmailChange(it) },
-                    errorMessage = if (email.isBlank() && uiState is UIState.Error)
-                        "E-posta boş bırakılamaz"
-                    else null
-
+                    value = uiState.email,
+                    onValueChange = {
+                        signInViewModel.onAction(SignInContract.UiAction.ChangeEmail(it))
+                    },
+                    errorMessage = if (uiState.showEmailError) "E-posta boş bırakılamaz" else null
                 )
                 LabeledTextField(
                     label = "Password *",
-                    value = password,
-                    onValueChange = { signInViewModel.onPasswordChange(it) },
+                    value = uiState.password,
+                    onValueChange = {
+                        signInViewModel.onAction(SignInContract.UiAction.ChangePassword(it))
+                    },
                     isPassword = true,
-                    errorMessage = if (password.isBlank() && uiState is UIState.Error)
-                        "Parola boş bırakılamaz"
-                    else null
-
+                    errorMessage = if (uiState.showPasswordError) "Parola boş bırakılamaz" else null
                 )
                 TextButton(
                     onClick = { onForgotPasswordClick() },
@@ -133,18 +113,18 @@ fun SignInScreen(
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 AuthButton(
-                    text = "Sign In",
-                    onClick = { signInViewModel.onSignInClick() },
+                    text = if (uiState.isLoading) "Loading…" else "Sign In",
+                    onClick = { signInViewModel.onAction(SignInContract.UiAction.SignInClick) },
                     modifier = Modifier.fillMaxWidth(),
                     containerColor = Color.Black,
-                    contentColor = Color.White,
-                    shape = RoundedCornerShape(12.dp),
+                    contentColor   = Color.White,
+                    shape  = RoundedCornerShape(12.dp),
                     height = 48.dp,
-                    enabled = email.isNotBlank() && password.isNotBlank()
+                    enabled = !uiState.isLoading
                 )
                 DividerWithText("Or Sign In With")
                 SocialIconsRow(
-                    onGoogleClick = { googleLauncher.launch(signInViewModel.getGoogleSignInIntent()) },
+                    onGoogleClick   = { signInViewModel.onAction(SignInContract.UiAction.GoogleSignInClick) },
                     onFacebookClick = { },
                     onAppleClick = { }
                 )

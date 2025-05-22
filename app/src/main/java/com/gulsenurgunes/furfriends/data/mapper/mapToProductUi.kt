@@ -58,3 +58,4 @@ fun BaseResponse.toFavoriteResponse(): FavoriteResponse {
         status = status ?: -1
     )
 }
+

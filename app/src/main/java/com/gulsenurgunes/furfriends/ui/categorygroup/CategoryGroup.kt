@@ -1,4 +1,4 @@
-package com.gulsenurgunes.furfriends.ui.category
+package com.gulsenurgunes.furfriends.ui.categorygroup
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -48,7 +48,6 @@ import coil.compose.SubcomposeAsyncImageContent
 import coil.request.ImageRequest
 import com.gulsenurgunes.furfriends.R
 import com.gulsenurgunes.furfriends.domain.model.ProductUi
-import com.gulsenurgunes.furfriends.navigation.Screen
 
 @Composable
 fun CategoryGroup(

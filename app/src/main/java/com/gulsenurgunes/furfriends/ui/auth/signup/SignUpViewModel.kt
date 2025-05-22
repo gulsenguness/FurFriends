@@ -1,64 +1,107 @@
 package com.gulsenurgunes.furfriends.ui.auth.signup
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulsenurgunes.furfriends.common.Resource
-import com.gulsenurgunes.furfriends.common.UIState
 import com.gulsenurgunes.furfriends.domain.usecase.SignUpUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.channels.Channel
+
+
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val signUpUseCase: SignUpUseCase,
 ) : ViewModel() {
-    var email by mutableStateOf("")
-        private set
-    var password by mutableStateOf("")
-        private set
-    var name by mutableStateOf("")
-        private set
-    var signUpState by mutableStateOf<UIState<Any?>>(UIState.Loading(isLoading = true))
-        private set
+    private val _uiState = MutableStateFlow(SignUpContract.UiState())
+    val uiState: StateFlow<SignUpContract.UiState> = _uiState.asStateFlow()
 
+    private val _uiEffect = Channel<SignUpContract.UiEffect>(Channel.BUFFERED)
+    val uiEffect = _uiEffect.receiveAsFlow()
 
-    fun onEmailChange(new: String) {
-        email = new
-    }
+    fun onAction(action: SignUpContract.UiAction) {
+        when (action) {
+            is SignUpContract.UiAction.ChangeEmail ->
+                update { copy(email = action.email) }
 
+            is SignUpContract.UiAction.ChangePassword ->
+                update { copy(password = action.password) }
 
-    fun onPasswordChange(password: String) {
-        this.password = password
+            is SignUpContract.UiAction.ChangeName ->
+                update { copy(name = action.name) }
 
-    }
+            is SignUpContract.UiAction.ChangeSurname ->
+                update { copy(surname = action.surname) }
 
-    fun onNameChange(new: String) {
-        name = new
-    }
+            SignUpContract.UiAction.SignUpClick ->
+                signUp()
 
-
-    fun onSignUpClick() {
-        if (name.isBlank() || email.isBlank() || password.isBlank()) {
-            signUpState = UIState.Error("Lütfen tüm alanları doldurun.")
-            return
+            SignUpContract.UiAction.ClearError ->
+                update { copy(signUpError = "") }
         }
-        viewModelScope.launch {
-            signUpState = UIState.Loading(isLoading = true)
-            signUpState = when (val res = signUpUseCase(name, email, password)) {
-                is Resource.Success ->
-                    UIState.Success(res.data)
-                is Resource.Error ->
-                    UIState.Error(res.message)
+    }
+
+    private fun signUp() = viewModelScope.launch {
+        val s = uiState.value
+        if (!validate(s)) return@launch
+
+        update { copy(isLoading = true, signUpError = "") }
+
+        when (val res = signUpUseCase(s.name, s.email, s.password)) {
+            is Resource.Success -> {
+                _uiEffect.send(SignUpContract.UiEffect.ShowSuccess)     // ✅ başarı
+                _uiEffect.send(SignUpContract.UiEffect.GoToMainScreen)  // ✅ navigate
+                _uiState.value = SignUpContract.UiState()               // ✅ formu sıfırla
+            }
+
+            is Resource.Error -> {
+                update { copy(isLoading = false, signUpError = res.message) }
+                _uiEffect.send(SignUpContract.UiEffect.ShowError(res.message)) // ✅ hata
             }
         }
     }
 
-    fun resetState() {
-        signUpState = UIState.Loading(isLoading = true)
+    private inline fun update(block: SignUpContract.UiState.() -> SignUpContract.UiState) =
+        _uiState.update(block)
+
+    private fun validate(s: SignUpContract.UiState): Boolean {
+        val msg = when {
+            s.name.isBlank()     -> "İsim boş bırakılamaz"
+            s.email.isBlank()    -> "E-posta boş bırakılamaz"
+            s.password.isBlank() -> "Parola boş bırakılamaz"
+            else                 -> null
+        }
+
+        if (msg != null) {
+            update {
+                copy(
+                    showNameError     = s.name.isBlank(),
+                    showEmailError    = s.email.isBlank(),
+                    showPasswordError = s.password.isBlank(),
+                    signUpError       = msg
+                )
+            }
+            _uiEffect.trySend(SignUpContract.UiEffect.ShowError(msg))
+            return false
+        }
+        return true
+
     }
 
+
 }
+
+
+
+
+
+
+
+

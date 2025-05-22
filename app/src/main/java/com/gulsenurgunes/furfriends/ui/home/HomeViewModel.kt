@@ -3,13 +3,9 @@ package com.gulsenurgunes.furfriends.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulsenurgunes.furfriends.common.Resource
-import com.gulsenurgunes.furfriends.common.UIState
-import com.gulsenurgunes.furfriends.data.source.remote.model.User
 import com.gulsenurgunes.furfriends.domain.usecase.GetCategoriesUseCase
-import com.gulsenurgunes.furfriends.domain.usecase.GetProductsByCategoryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -56,7 +52,4 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-
-
-
 }
