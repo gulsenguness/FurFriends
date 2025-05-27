@@ -76,5 +76,13 @@ class CategoryGroupViewModel @Inject constructor(
         }
     }
 
-
+    fun toggleLocalFavorite(productId: Int) {
+        _uiState.update { state ->
+            state.copy(
+                products = state.products.map { p ->
+                    if (p.id == productId) p.copy(isFavorite = !p.isFavorite) else p
+                }
+            )
+        }
+    }
 }

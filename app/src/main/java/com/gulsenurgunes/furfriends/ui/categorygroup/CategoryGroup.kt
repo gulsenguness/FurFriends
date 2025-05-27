@@ -3,6 +3,7 @@ package com.gulsenurgunes.furfriends.ui.categorygroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,6 +22,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -48,12 +50,15 @@ import coil.compose.SubcomposeAsyncImageContent
 import coil.request.ImageRequest
 import com.gulsenurgunes.furfriends.R
 import com.gulsenurgunes.furfriends.domain.model.ProductUi
+import com.gulsenurgunes.furfriends.navigation.Screen
+import com.gulsenurgunes.furfriends.ui.favorites.FavoriteContract
+import com.gulsenurgunes.furfriends.ui.favorites.FavoritesViewModel
 
 @Composable
 fun CategoryGroup(
     navController: NavController,
-    categoryKey: String,
-    viewModel: CategoryGroupViewModel = hiltViewModel()
+    viewModel: CategoryGroupViewModel = hiltViewModel(),
+    favoritesViewModel: FavoritesViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -63,9 +68,11 @@ fun CategoryGroup(
                 modifier = Modifier.fillMaxSize()
             )
         }
+
         uiState.errorMessage != null -> {
 
         }
+
         else -> {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
@@ -77,6 +84,22 @@ fun CategoryGroup(
                     CategoryGroupItem(
                         navController = navController,
                         product = product,
+                        onToggleFavorite = {
+                            viewModel.toggleLocalFavorite(it.id)
+                            if (it.isFavorite) {
+                                favoritesViewModel.onAction(
+                                    FavoriteContract.UiAction.DeleteFromFavorites(it.id)
+                                )
+                            } else {
+                                favoritesViewModel.onAction(
+                                    FavoriteContract.UiAction.AddToFavorites(it.id)
+                                )
+                            }
+
+                        },
+                        onClick = {
+                            navController.navigate(Screen.Detail.createRoute(product.id))
+                        }
                     )
                 }
             }
@@ -87,10 +110,14 @@ fun CategoryGroup(
 @Composable
 fun CategoryGroupItem(
     navController: NavController,
+    onToggleFavorite: (ProductUi) -> Unit,
     product: ProductUi,
-){
+    onClick: () -> Unit
+) {
+    val isFav = product.isFavorite
     Card(
         modifier = Modifier
+            .clickable { onClick() }
             .width(200.dp)
             .border(
                 width = 1.dp,
@@ -100,7 +127,7 @@ fun CategoryGroupItem(
             .height(220.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent)
-    ){
+    ) {
         Box {
             SubcomposeAsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
@@ -137,7 +164,7 @@ fun CategoryGroupItem(
             }
 
             IconButton(
-                onClick =  {"Favori iconu"},
+                onClick = { onToggleFavorite(product) },
                 modifier = Modifier
                     .size(32.dp)
                     .align(Alignment.TopEnd)
@@ -146,9 +173,9 @@ fun CategoryGroupItem(
                     .zIndex(1f)
             ) {
                 Icon(
-                    imageVector = Icons.Default.Favorite,
-                    contentDescription = "Favorite",
-                    tint = Color.Black,
+                    imageVector = if (isFav) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    contentDescription = if (isFav) "UnFavorite" else "Favorite",
+                    tint = if (isFav) Color.Red else Color.Gray,
                     modifier = Modifier.size(16.dp)
                 )
             }

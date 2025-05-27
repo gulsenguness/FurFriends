@@ -20,8 +20,9 @@ import com.gulsenurgunes.furfriends.ui.auth.signin.SignInScreen
 import com.gulsenurgunes.furfriends.ui.auth.signup.SignUpScreen
 import com.gulsenurgunes.furfriends.ui.auth.splash.PageOne
 import com.gulsenurgunes.furfriends.ui.auth.splash.PageTwo
-import com.gulsenurgunes.furfriends.ui.categorygroup.CategoryGroup
 import com.gulsenurgunes.furfriends.ui.category.CategoryScreen
+import com.gulsenurgunes.furfriends.ui.categorygroup.CategoryGroup
+import com.gulsenurgunes.furfriends.ui.detail.DetailScreen
 import com.gulsenurgunes.furfriends.ui.favorites.FavoritesScreen
 import com.gulsenurgunes.furfriends.ui.home.HomeScreen
 import com.gulsenurgunes.furfriends.ui.mycart.MyCartScreen
@@ -129,17 +130,23 @@ fun AppNavHost(
                             type = NavType.StringType
                         }
                     )
-                ) { backStackEntry ->
-                    val key = backStackEntry
-                        .arguments
-                        ?.getString("categoryKey")
-                        .orEmpty()
-
+                ) {
                     CategoryGroup(
                         navController = navController,
-                        categoryKey   = key,
                     )
                 }
+                composable(
+                    route = "detail/{productId}",
+                    arguments = listOf(navArgument("productId") {
+                        type = NavType.IntType
+                    })
+                ) { backStackEntry ->
+                    val productId = backStackEntry.arguments?.getInt("productId")
+                    if (productId != null) {
+                        DetailScreen()
+                    }
+                }
+
             }
         }
     }
