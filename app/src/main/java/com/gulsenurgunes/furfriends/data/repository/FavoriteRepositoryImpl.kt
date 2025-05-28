@@ -11,12 +11,13 @@ import com.gulsenurgunes.furfriends.domain.model.DeleteFromFavoriteBody
 import com.gulsenurgunes.furfriends.domain.model.FavoriteResponse
 import com.gulsenurgunes.furfriends.domain.model.ProductUi
 import com.gulsenurgunes.furfriends.domain.repository.FavoriteRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 class FavoriteRepositoryImpl @Inject constructor(
     private val api: ApiService,
 ) : FavoriteRepository {
-
     override suspend fun add(
         userId: String,
         productId: String
@@ -41,7 +42,7 @@ class FavoriteRepositoryImpl @Inject constructor(
                 store = "",
                 deleteFromFavoriteBody = DeleteFromFavoriteBody(
                     userId = userId,
-                    id     = productId.toInt()
+                    id = productId.toInt()
                 )
             )
         }.mapResource { it.toFavoriteResponse() }
@@ -56,6 +57,8 @@ class FavoriteRepositoryImpl @Inject constructor(
     ): Resource<List<ProductUi>> =
         safeApiCall { api.getFavorites(store = "", userId = userId) }
             .mapResource { dto ->
-                dto.products.mapNotNull { it.mapToProductUi() }
+                dto.products
+                    .orEmpty()
+                    .mapNotNull { it.mapToProductUi() }
             }
 }

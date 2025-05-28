@@ -143,7 +143,7 @@ fun AppNavHost(
                 ) { backStackEntry ->
                     val productId = backStackEntry.arguments?.getInt("productId")
                     if (productId != null) {
-                        DetailScreen()
+                        DetailScreen(navController)
                     }
                 }
 

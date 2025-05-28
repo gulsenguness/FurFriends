@@ -133,7 +133,7 @@ fun Home() {
 }
 
 @Composable
-private fun HomeTopBar(onSearch: () -> Unit) = TopBar(
+fun HomeTopBar(onSearch: () -> Unit) = TopBar(
     title = {
         Image(
             painterResource(R.drawable.first),
