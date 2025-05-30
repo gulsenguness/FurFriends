@@ -68,11 +68,9 @@ fun CategoryGroup(
                 modifier = Modifier.fillMaxSize()
             )
         }
-
         uiState.errorMessage != null -> {
 
         }
-
         else -> {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
@@ -82,20 +80,19 @@ fun CategoryGroup(
             ) {
                 items(uiState.products) { product ->
                     CategoryGroupItem(
-                        navController = navController,
                         product = product,
-                        onToggleFavorite = {
-                            viewModel.toggleLocalFavorite(it.id)
-                            if (it.isFavorite) {
+                        onToggleFavorite = { p ->
+                            viewModel.toggleLocalFavorite(p.id)
+
+                            if (p.isFavorite) {
                                 favoritesViewModel.onAction(
-                                    FavoriteContract.UiAction.DeleteFromFavorites(it.id)
+                                    FavoriteContract.UiAction.DeleteFromFavorites(p.id)
                                 )
                             } else {
                                 favoritesViewModel.onAction(
-                                    FavoriteContract.UiAction.AddToFavorites(it.id)
+                                    FavoriteContract.UiAction.AddToFavorites(p.id)
                                 )
                             }
-
                         },
                         onClick = {
                             navController.navigate(Screen.Detail.createRoute(product.id))
@@ -109,7 +106,6 @@ fun CategoryGroup(
 
 @Composable
 fun CategoryGroupItem(
-    navController: NavController,
     onToggleFavorite: (ProductUi) -> Unit,
     product: ProductUi,
     onClick: () -> Unit
@@ -162,7 +158,6 @@ fun CategoryGroupItem(
                     else -> SubcomposeAsyncImageContent()
                 }
             }
-
             IconButton(
                 onClick = { onToggleFavorite(product) },
                 modifier = Modifier
@@ -180,15 +175,12 @@ fun CategoryGroupItem(
                 )
             }
             Spacer(Modifier.height(8.dp))
-
             Text(
                 text = product.title,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(horizontal = 8.dp)
             )
-
             Spacer(Modifier.height(4.dp))
-
             Text(
                 text = "₺${product.price}",
                 style = MaterialTheme.typography.bodySmall,
