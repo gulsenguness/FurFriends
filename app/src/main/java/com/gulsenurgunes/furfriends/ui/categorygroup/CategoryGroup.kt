@@ -58,7 +58,6 @@ import com.gulsenurgunes.furfriends.ui.favorites.FavoritesViewModel
 fun CategoryGroup(
     navController: NavController,
     viewModel: CategoryGroupViewModel = hiltViewModel(),
-    favoritesViewModel: FavoritesViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -82,17 +81,7 @@ fun CategoryGroup(
                     CategoryGroupItem(
                         product = product,
                         onToggleFavorite = { p ->
-                            viewModel.toggleLocalFavorite(p.id)
-
-                            if (p.isFavorite) {
-                                favoritesViewModel.onAction(
-                                    FavoriteContract.UiAction.DeleteFromFavorites(p.id)
-                                )
-                            } else {
-                                favoritesViewModel.onAction(
-                                    FavoriteContract.UiAction.AddToFavorites(p.id)
-                                )
-                            }
+                            viewModel.toggleFavorite(p)
                         },
                         onClick = {
                             navController.navigate(Screen.Detail.createRoute(product.id))
