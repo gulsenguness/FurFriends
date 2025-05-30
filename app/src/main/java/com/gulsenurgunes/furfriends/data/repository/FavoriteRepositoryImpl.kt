@@ -5,24 +5,25 @@ import com.gulsenurgunes.furfriends.common.mapResource
 import com.gulsenurgunes.furfriends.data.mapper.mapToProductUi
 import com.gulsenurgunes.furfriends.data.mapper.toFavoriteResponse
 import com.gulsenurgunes.furfriends.data.safeApiCall
+import com.gulsenurgunes.furfriends.data.source.local.FavoritesLocalDataSource
 import com.gulsenurgunes.furfriends.data.source.remote.ApiService
 import com.gulsenurgunes.furfriends.domain.model.BaseBody
 import com.gulsenurgunes.furfriends.domain.model.DeleteFromFavoriteBody
 import com.gulsenurgunes.furfriends.domain.model.FavoriteResponse
 import com.gulsenurgunes.furfriends.domain.model.ProductUi
 import com.gulsenurgunes.furfriends.domain.repository.FavoriteRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 class FavoriteRepositoryImpl @Inject constructor(
     private val api: ApiService,
+    private val local: FavoritesLocalDataSource
 ) : FavoriteRepository {
+
     override suspend fun add(
         userId: String,
         productId: String
-    ): Resource<FavoriteResponse> =
-        safeApiCall {
+    ): Resource<FavoriteResponse> {
+        val res = safeApiCall {
             api.addToFavorites(
                 store = "",
                 baseBody = BaseBody(
@@ -30,35 +31,35 @@ class FavoriteRepositoryImpl @Inject constructor(
                     productId = productId.toInt()
                 )
             )
-        }.mapResource { dto -> dto.toFavoriteResponse() }
+        }.mapResource { it.toFavoriteResponse() }
 
+        if (res is Resource.Success) local.add(productId.toInt())   // ⭐
+        return res
+    }
 
-    override suspend fun delete(
-        userId: String,
-        productId: String
-    ): Resource<FavoriteResponse> =
-        safeApiCall {
+    override suspend fun delete(userId: String, productId: String): Resource<FavoriteResponse> {
+        val res = safeApiCall {
             api.deleteFromFavorites(
-                store = "",
-                deleteFromFavoriteBody = DeleteFromFavoriteBody(
-                    userId = userId,
-                    id = productId.toInt()
-                )
+                "", DeleteFromFavoriteBody(userId, productId.toInt())
             )
         }.mapResource { it.toFavoriteResponse() }
 
-
-    override suspend fun clear(userId: String): FavoriteResponse {
-        throw NotImplementedError("clearFavorites endpoint’i backend’de yoksa kendi döngünü yaz")
+        if (res is Resource.Success) local.remove(productId.toInt())
+        return res
     }
 
-    override suspend fun getFavorites(
-        userId: String
-    ): Resource<List<ProductUi>> =
-        safeApiCall { api.getFavorites(store = "", userId = userId) }
+    override suspend fun clear(userId: String): FavoriteResponse {
+        local.clear()
+        return FavoriteResponse("Local cleared", 200)
+    }
+
+    override suspend fun getFavorites(userId: String): Resource<List<ProductUi>> {
+        val localIds = local.getIds()
+        return safeApiCall { api.getFavorites("", userId) }
             .mapResource { dto ->
-                dto.products
-                    .orEmpty()
+                dto.products.orEmpty()
                     .mapNotNull { it.mapToProductUi() }
+                    .map { it.copy(isFavorite = localIds.contains(it.id)) } // ⭐
             }
+    }
 }
