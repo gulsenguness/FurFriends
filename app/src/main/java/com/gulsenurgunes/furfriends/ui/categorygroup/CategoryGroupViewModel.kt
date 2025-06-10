@@ -1,15 +1,14 @@
 package com.gulsenurgunes.furfriends.ui.categorygroup
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulsenurgunes.furfriends.common.Resource
 import com.gulsenurgunes.furfriends.domain.model.ProductUi
-import com.gulsenurgunes.furfriends.domain.usecase.AddToFavoriteUseCase
-import com.gulsenurgunes.furfriends.domain.usecase.GetAllProductsUseCase
-import com.gulsenurgunes.furfriends.domain.usecase.ObserveFavoriteIdsUseCase
-import com.gulsenurgunes.furfriends.domain.usecase.RemoveFromFavoritesUseCase
+import com.gulsenurgunes.furfriends.domain.usecase.favorites.AddToFavoriteUseCase
+import com.gulsenurgunes.furfriends.domain.usecase.order.GetAllProductsUseCase
+import com.gulsenurgunes.furfriends.domain.usecase.favorites.ObserveFavoriteIdsUseCase
+import com.gulsenurgunes.furfriends.domain.usecase.favorites.RemoveFromFavoritesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow

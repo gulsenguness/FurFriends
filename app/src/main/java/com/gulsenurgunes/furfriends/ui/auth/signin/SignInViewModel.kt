@@ -7,8 +7,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.ApiException
 import com.gulsenurgunes.furfriends.common.Resource
-import com.gulsenurgunes.furfriends.domain.usecase.SignInUseCase
-import com.gulsenurgunes.furfriends.domain.usecase.SignInWithGoogleUseCase
+import com.gulsenurgunes.furfriends.domain.usecase.auth.SignInUseCase
+import com.gulsenurgunes.furfriends.domain.usecase.auth.SignInWithGoogleUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow

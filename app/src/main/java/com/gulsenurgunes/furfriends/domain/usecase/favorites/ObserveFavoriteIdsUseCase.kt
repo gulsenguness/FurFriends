@@ -1,4 +1,4 @@
-package com.gulsenurgunes.furfriends.domain.usecase
+package com.gulsenurgunes.furfriends.domain.usecase.favorites
 
 import com.gulsenurgunes.furfriends.data.source.local.FavoritesLocalDataSource
 import kotlinx.coroutines.flow.Flow

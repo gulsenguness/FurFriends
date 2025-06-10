@@ -3,7 +3,7 @@ package com.gulsenurgunes.furfriends.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulsenurgunes.furfriends.common.Resource
-import com.gulsenurgunes.furfriends.domain.usecase.GetCategoriesUseCase
+import com.gulsenurgunes.furfriends.domain.usecase.order.GetCategoriesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow

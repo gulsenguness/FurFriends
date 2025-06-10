@@ -16,6 +16,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -80,6 +82,7 @@ fun Checkout() {
             Column {
                 CheckoutAddressCartSection(
                     leadingIcon = Icons.Default.LocationOn,
+                    lastIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     title = "Delivery Address",
                     subtitle = "123 Main Street, Anytown, USA 12345",
                     onClick = { }
@@ -87,6 +90,7 @@ fun Checkout() {
                 DividerC()
                 CheckoutAddressCartSection(
                     leadingIcon = Icons.Default.ShoppingCart,
+                    lastIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     title = "Cart",
                     subtitle = "XXXX XXXX XXXX 3456",
                     onClick = { }
@@ -151,6 +155,7 @@ fun Checkout() {
 @Composable
 fun CheckoutAddressCartSection(
     leadingIcon: ImageVector,
+    lastIcon: ImageVector,
     title: String,
     subtitle: String,
     onClick: () -> Unit = {}
@@ -199,7 +204,7 @@ fun CheckoutAddressCartSection(
 
         }
         Icon(
-            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            imageVector = lastIcon,
             contentDescription = null,
             tint = Color.Black,
             modifier = Modifier.size(24.dp)

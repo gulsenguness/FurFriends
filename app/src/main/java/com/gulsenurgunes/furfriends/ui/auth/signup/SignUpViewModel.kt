@@ -3,7 +3,7 @@ package com.gulsenurgunes.furfriends.ui.auth.signup
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulsenurgunes.furfriends.common.Resource
-import com.gulsenurgunes.furfriends.domain.usecase.SignUpUseCase
+import com.gulsenurgunes.furfriends.domain.usecase.auth.SignUpUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

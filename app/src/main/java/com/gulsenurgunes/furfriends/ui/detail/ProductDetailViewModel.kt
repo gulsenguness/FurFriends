@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulsenurgunes.furfriends.common.Resource
-import com.gulsenurgunes.furfriends.domain.usecase.GetProductDetailUseCase
+import com.gulsenurgunes.furfriends.domain.usecase.order.GetProductDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -66,11 +66,9 @@ class ProductDetailViewModel @Inject constructor(
                 sendEffect(ProductDetailContract.UiEffect.ShareProduct(shareText))
             }
             is ProductDetailContract.UiAction.ToggleFavoriteClick -> {
-                // Buraya favori işlemleri eklenecekse eklenebilir
-                // _uiState.update { it.copy(...) }
+
             }
             is ProductDetailContract.UiAction.AddToCartClick -> {
-                // Sepete ekleme işlemi (dummy logic şimdilik)
                 sendEffect(ProductDetailContract.UiEffect.ShowToastMessage("Product added to cart"))
             }
         }

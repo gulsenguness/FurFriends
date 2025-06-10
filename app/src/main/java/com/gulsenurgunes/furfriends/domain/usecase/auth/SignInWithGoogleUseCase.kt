@@ -1,4 +1,4 @@
-package com.gulsenurgunes.furfriends.domain.usecase
+package com.gulsenurgunes.furfriends.domain.usecase.auth
 
 import com.gulsenurgunes.furfriends.domain.repository.AuthRepository
 import javax.inject.Inject

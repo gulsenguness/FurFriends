@@ -1,10 +1,9 @@
 package com.gulsenurgunes.furfriends.ui.category
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulsenurgunes.furfriends.common.Resource
-import com.gulsenurgunes.furfriends.domain.usecase.GetCategoriesUseCase
+import com.gulsenurgunes.furfriends.domain.usecase.order.GetCategoriesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

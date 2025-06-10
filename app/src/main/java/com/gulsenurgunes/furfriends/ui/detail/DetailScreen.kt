@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.gulsenurgunes.furfriends.navigation.Screen
 import com.gulsenurgunes.furfriends.navigation.TopBar
 import com.gulsenurgunes.furfriends.ui.auth.components.AuthButton
 
@@ -153,7 +154,12 @@ fun DetailScreen(
                             )
                             Text(product.description ?: "No description available.")
                             Spacer(Modifier.height(24.dp))
-                            AuthButton(text = "Add To Cart", onClick = {})
+                            AuthButton(
+                                text = "Add To Cart",
+                                onClick = {
+                                    navController.navigate(Screen.MyCart.route)
+                                }
+                            )
                         }
                     }
                 }

@@ -1,4 +1,4 @@
-package com.gulsenurgunes.furfriends.domain.usecase
+package com.gulsenurgunes.furfriends.domain.usecase.favorites
 
 import com.gulsenurgunes.furfriends.common.Resource
 import com.gulsenurgunes.furfriends.domain.model.ProductUi

@@ -4,10 +4,10 @@ import com.gulsenurgunes.furfriends.data.source.remote.model.CategoryDto
 import com.gulsenurgunes.furfriends.data.source.remote.model.ProductDetail
 import com.gulsenurgunes.furfriends.data.source.remote.model.ProductDto
 import com.gulsenurgunes.furfriends.data.source.remote.model.response.BaseResponse
+import com.gulsenurgunes.furfriends.domain.model.CartItem
 import com.gulsenurgunes.furfriends.domain.model.Category
 import com.gulsenurgunes.furfriends.domain.model.FavoriteResponse
 import com.gulsenurgunes.furfriends.domain.model.ProductUi
-
 
 fun ProductDto.mapToProductUi(): ProductUi? {
     return this.id?.let {
@@ -29,8 +29,8 @@ fun ProductDto.mapToProductUi(): ProductUi? {
     }
 }
 
-fun ProductDto.mapToProductDetail(isFavorite: Boolean): ProductDetail {
-    return ProductDetail(
+fun ProductDto.mapToProductDetail(isFavorite: Boolean): ProductDetail =
+    ProductDetail(
         description = this.description.orEmpty(),
         id = this.id,
         imageOne = this.imageOne.orEmpty(),
@@ -43,19 +43,27 @@ fun ProductDto.mapToProductDetail(isFavorite: Boolean): ProductDetail {
         imageThree = this.imageThree.orEmpty(),
         imageTwo = this.imageTwo.orEmpty(),
     )
-}
 
 fun CategoryDto.toDomain(): Category =
     Category(
-        id= this.id ?: 0,
+        id = this.id ?: 0,
         name = this.name.orEmpty(),
         imageUrl = this.imageUrl.orEmpty()
     )
 
-fun BaseResponse.toFavoriteResponse(): FavoriteResponse {
-    return FavoriteResponse(
+fun BaseResponse.toFavoriteResponse(): FavoriteResponse =
+    FavoriteResponse(
         message = message.orEmpty(),
         status = status ?: -1
     )
-}
+
+fun ProductDto.toCartItem(quantity: Int = 1): CartItem =
+    CartItem(
+        id        = id ?: 0,
+        title     = title.orEmpty(),
+        imageUrl  = imageOne.orEmpty(),
+        price     = price ?: 0.0,
+        salePrice = salePrice,
+        quantity  = quantity
+    )
 
