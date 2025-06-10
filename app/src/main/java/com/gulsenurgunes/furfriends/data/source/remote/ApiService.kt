@@ -1,12 +1,14 @@
 package com.gulsenurgunes.furfriends.data.source.remote
 
-import com.gulsenurgunes.furfriends.data.source.remote.model.CheckFavoriteResponse
 import com.gulsenurgunes.furfriends.data.source.remote.model.response.BaseResponse
-import com.gulsenurgunes.furfriends.data.source.remote.model.response.GetCartProductResponse
+import com.gulsenurgunes.furfriends.data.source.remote.model.response.GetCartProductsResponse
 import com.gulsenurgunes.furfriends.data.source.remote.model.response.GetCategoriesResponse
 import com.gulsenurgunes.furfriends.data.source.remote.model.response.GetProductDetailResponse
 import com.gulsenurgunes.furfriends.data.source.remote.model.response.ProductListDto
+import com.gulsenurgunes.furfriends.domain.model.AddToCartBody
 import com.gulsenurgunes.furfriends.domain.model.BaseBody
+import com.gulsenurgunes.furfriends.domain.model.ClearCartBody
+import com.gulsenurgunes.furfriends.domain.model.DeleteFromCartBody
 import com.gulsenurgunes.furfriends.domain.model.DeleteFromFavoriteBody
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -31,19 +33,6 @@ interface ApiService {
         @Query("id") id: Int
     ): GetProductDetailResponse
 
-    @GET("check_favorite")
-    suspend fun checkIsFavorite(
-        @Header("store") store: String,
-        @Query("userId") userId: String,
-        @Query("productId") productId: Int
-    ): CheckFavoriteResponse
-
-    @GET("get_cart_products")
-    suspend fun getCartProducts(
-        @Header("store") store: String,
-        @Query("userId") id: String
-    ): GetCartProductResponse
-
     @POST("add_to_favorites")
     suspend fun addToFavorites(
         @Header("store") store: String,
@@ -67,4 +56,29 @@ interface ApiService {
         @Header("store") store: String,
         @Query("category") category: String
     ): ProductListDto
+
+    @GET("get_cart_products")
+    suspend fun getCartProducts(
+        @Header("store") store: String,
+        @Query("userId") userId: String
+    ): GetCartProductsResponse
+
+    @POST("add_to_cart")
+    suspend fun addToCart(
+        @Header("store") store: String,
+        @Body body: AddToCartBody
+    ): BaseResponse
+
+    @POST("delete_from_cart")
+    suspend fun deleteFromCart(
+        @Header("store") store: String,
+        @Body body: DeleteFromCartBody
+    ): BaseResponse
+
+    @POST("clear_cart")
+    suspend fun clearCart(
+        @Header("store") store: String,
+        @Body body: ClearCartBody
+    ): BaseResponse
+
 }
