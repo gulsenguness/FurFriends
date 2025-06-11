@@ -69,6 +69,10 @@ fun DetailScreen(
                     )
                 }
 
+                is ProductDetailContract.UiEffect.NavigateToCart -> {
+                    navController.navigate(Screen.MyCart.route) { launchSingleTop = true }
+                }
+
                 else -> {}
             }
         }
@@ -157,7 +161,7 @@ fun DetailScreen(
                             AuthButton(
                                 text = "Add To Cart",
                                 onClick = {
-                                    navController.navigate(Screen.MyCart.route)
+                                    viewModel.onAction(ProductDetailContract.UiAction.AddToCartClick(product))
                                 }
                             )
                         }

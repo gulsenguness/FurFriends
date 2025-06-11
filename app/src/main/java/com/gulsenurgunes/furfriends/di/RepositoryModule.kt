@@ -10,7 +10,6 @@ import com.gulsenurgunes.furfriends.domain.repository.FavoriteRepository
 import com.gulsenurgunes.furfriends.domain.repository.ProductRepository
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
@@ -24,7 +23,6 @@ abstract class RepositoryModule {
     abstract fun bindCategoryRepository(
         impl: CategoryRepositoryImpl
     ): CategoryRepository
-
 
     @Binds
     @Singleton

@@ -1,7 +1,6 @@
 package com.gulsenurgunes.furfriends.domain.repository
 
 import com.gulsenurgunes.furfriends.domain.model.CartItem
-import com.gulsenurgunes.furfriends.domain.model.ProductUi
 
 interface CartRepository {
     suspend fun getCartProducts(userId: String): List<CartItem>

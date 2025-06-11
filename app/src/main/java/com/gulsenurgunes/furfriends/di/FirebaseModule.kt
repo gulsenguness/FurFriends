@@ -16,6 +16,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -51,5 +52,9 @@ abstract class FirebaseModule {
 
             return GoogleSignIn.getClient(context, gso)
         }
+
+        @Provides
+        @Named("userId")
+        fun provideUid(auth: FirebaseAuth) = auth.currentUser?.uid ?: ""
     }
 }

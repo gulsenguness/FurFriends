@@ -25,5 +25,6 @@ object ProductDetailContract {
         data object NavigateBack : UiEffect()
         data class ShareProduct(val shareText: String) : UiEffect()
         data class ShowAlreadyInCartMessage(val message: String) : UiEffect()
+        data object NavigateToCart : UiEffect()
     }
 }

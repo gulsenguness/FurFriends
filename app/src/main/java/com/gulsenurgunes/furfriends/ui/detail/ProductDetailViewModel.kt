@@ -1,9 +1,11 @@
 package com.gulsenurgunes.furfriends.ui.detail
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulsenurgunes.furfriends.common.Resource
+import com.gulsenurgunes.furfriends.domain.usecase.cart.AddToCartUseCase
 import com.gulsenurgunes.furfriends.domain.usecase.order.GetProductDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -15,10 +17,13 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Named
 
 @HiltViewModel
 class ProductDetailViewModel @Inject constructor(
     private val getProductDetailUseCase: GetProductDetailUseCase,
+    private val addToCartUseCase: AddToCartUseCase,
+    @Named("userId") private val userId: String,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -69,8 +74,23 @@ class ProductDetailViewModel @Inject constructor(
 
             }
             is ProductDetailContract.UiAction.AddToCartClick -> {
-                sendEffect(ProductDetailContract.UiEffect.ShowToastMessage("Product added to cart"))
+                viewModelScope.launch {
+                    val pid = action.productDetail.id ?: return@launch
+                    Log.d("CART_FLOW", "add → uid=$userId, pid=$pid")
+
+                    val result = addToCartUseCase(userId, pid)
+
+                    if (result.isSuccess) {
+                        Log.d("CART_FLOW", "add → success")
+                        sendEffect(ProductDetailContract.UiEffect.ShowToastMessage("Ürün sepete eklendi"))
+                        sendEffect(ProductDetailContract.UiEffect.NavigateToCart)
+                    } else {
+                        Log.e("CART_FLOW", "add → failed", result.exceptionOrNull())
+                        sendEffect(ProductDetailContract.UiEffect.ShowToastMessage(result.exceptionOrNull()?.message ?: "Ekleme hatası"))
+                    }
+                }
             }
+
         }
     }
 
