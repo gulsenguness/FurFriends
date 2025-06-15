@@ -80,5 +80,4 @@ interface ApiService {
         @Header("store") store: String,
         @Body body: ClearCartBody
     ): BaseResponse
-
 }

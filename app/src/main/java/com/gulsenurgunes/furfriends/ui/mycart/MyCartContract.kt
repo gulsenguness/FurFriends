@@ -18,6 +18,7 @@ object MyCartContract {
         data object ClearCartClick : UiAction()
         data object CheckoutClick : UiAction()
         data object BackButtonClick : UiAction()
+        data class DeleteItem(val id: Int) : UiAction()
     }
 
     sealed class UiEffect {

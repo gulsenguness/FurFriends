@@ -31,8 +31,11 @@ class CartRepositoryImpl @Inject constructor(
         api.clearCart(store, ClearCartBody(userId))
             .toResult()
 
-    private fun BaseResponse.toResult(): Result<Unit> =
-        if (status == 1) Result.success(Unit)
-        else Result.failure(IllegalStateException(message))
-
+    private fun BaseResponse.toResult(): Result<Unit> {
+        return if (status == 1 || (message?.contains("successfully", ignoreCase = true) == true)) {
+            Result.success(Unit)
+        } else {
+            Result.failure(IllegalStateException(message))
+        }
+    }
 }
