@@ -1,4 +1,4 @@
-package com.gulsenurgunes.furfriends.ui.home
+package com.gulsenurgunes.furfriends.ui.home.homefirst
 
 import com.gulsenurgunes.furfriends.domain.model.Category
 import com.gulsenurgunes.furfriends.domain.model.ProductUi

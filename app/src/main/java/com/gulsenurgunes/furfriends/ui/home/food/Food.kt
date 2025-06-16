@@ -1,4 +1,4 @@
-package com.gulsenurgunes.furfriends.ui.home
+package com.gulsenurgunes.furfriends.ui.home.food
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -41,7 +41,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.gulsenurgunes.furfriends.domain.model.ProductUi
 import com.gulsenurgunes.furfriends.ui.components.DividerC
-
 
 @Composable
 fun Food(

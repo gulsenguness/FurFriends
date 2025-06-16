@@ -24,7 +24,7 @@ import com.gulsenurgunes.furfriends.ui.category.CategoryScreen
 import com.gulsenurgunes.furfriends.ui.categorygroup.CategoryGroup
 import com.gulsenurgunes.furfriends.ui.detail.DetailScreen
 import com.gulsenurgunes.furfriends.ui.favorites.FavoritesScreen
-import com.gulsenurgunes.furfriends.ui.home.HomeScreen
+import com.gulsenurgunes.furfriends.ui.home.homefirst.HomeScreen
 import com.gulsenurgunes.furfriends.ui.mycart.MyCartScreen
 import com.gulsenurgunes.furfriends.ui.navigation.BottomNavigationBar
 import com.gulsenurgunes.furfriends.ui.profile.ProfileScreen
@@ -109,7 +109,7 @@ fun AppNavHost(
                 startDestination = Screen.Home.route
             ) {
                 composable(Screen.Home.route) {
-                    HomeScreen()
+                    HomeScreen(navController)
                 }
                 composable(Screen.Favorites.route) {
                     FavoritesScreen()

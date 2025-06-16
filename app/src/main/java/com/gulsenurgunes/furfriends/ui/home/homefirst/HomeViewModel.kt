@@ -1,4 +1,4 @@
-package com.gulsenurgunes.furfriends.ui.home
+package com.gulsenurgunes.furfriends.ui.home.homefirst
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

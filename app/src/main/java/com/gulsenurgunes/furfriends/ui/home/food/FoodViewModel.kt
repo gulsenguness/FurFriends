@@ -1,4 +1,4 @@
-package com.gulsenurgunes.furfriends.ui.home
+package com.gulsenurgunes.furfriends.ui.home.food
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -70,7 +70,6 @@ class FoodViewModel @Inject constructor(
             }
         }
     }
-
 
     private fun selectSubCategory(category: String) {
         val keys = titleMap[category] ?: listOf(category)
