@@ -2,6 +2,7 @@ package com.gulsenurgunes.furfriends.ui.favorites
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,7 +49,8 @@ fun FavoriteItemCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(240.dp),
+            .height(240.dp)
+            .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(1.dp, Color.Black),
         elevation = CardDefaults.cardElevation(4.dp),
@@ -72,7 +74,7 @@ fun FavoriteItemCard(
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    text = product.title,
+                    text = product.category,
                     fontSize = 18.sp,
                     modifier = Modifier
                         .fillMaxWidth()

@@ -29,11 +29,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.gulsenurgunes.furfriends.navigation.TopBar
 
 @Composable
 fun FavoritesScreen(
-    viewModel: FavoritesViewModel = hiltViewModel()
+    viewModel: FavoritesViewModel = hiltViewModel(),
+    navController: NavController,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
@@ -65,7 +67,10 @@ fun FavoritesScreen(
                         Column {
                             Text("Wishlist")
                             Row {
-                                Text(text = "${uiState.favoriteProducts.size} Items", fontSize = 14.sp)
+                                Text(
+                                    text = "${uiState.favoriteProducts.size} Items",
+                                    fontSize = 14.sp
+                                )
                                 Text(text = "Total: $213 ", fontSize = 14.sp)
                             }
                         }
@@ -82,7 +87,7 @@ fun FavoritesScreen(
         Column(modifier = Modifier.padding(padding)) {
             FavoritesItemSection(
                 selectedCategory = selectedCategory,
-                onCategorySelected = {viewModel.onCategorySelected(it)}
+                onCategorySelected = { viewModel.onCategorySelected(it) }
             )
             when {
                 uiState.isLoading -> {
@@ -107,11 +112,19 @@ fun FavoritesScreen(
                         items(uiState.favoriteProducts) { product ->
                             FavoriteItemCard(
                                 product = product,
-                                onRemoveClick = { viewModel.onAction(FavoriteContract.UiAction.DeleteFromFavorites(product.id)) },
+                                onRemoveClick = {
+                                    viewModel.onAction(
+                                        FavoriteContract.UiAction.DeleteFromFavorites(
+                                            product.id
+                                        )
+                                    )
+                                },
                                 onAddToCartClick = {
                                     viewModel.onAction(FavoriteContract.UiAction.AddToCart(product))
                                 },
-                                onClick = {  }
+                                onClick = {
+                                    navController.navigate("detail/${product.id}")
+                                }
                             )
                         }
                     }
@@ -121,8 +134,3 @@ fun FavoritesScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun FavoritesPreview() {
-    FavoritesScreen()
-}

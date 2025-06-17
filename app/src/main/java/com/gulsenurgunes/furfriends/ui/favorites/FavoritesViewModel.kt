@@ -1,6 +1,5 @@
 package com.gulsenurgunes.furfriends.ui.favorites
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulsenurgunes.furfriends.common.Resource
@@ -29,7 +28,7 @@ class FavoritesViewModel @Inject constructor(
     private val removeFromFavorites: RemoveFromFavoritesUseCase,
     private val addToCart: AddToCartUseCase,
     @Named("userId") private val userId: String,
-    ) : ViewModel() {
+) : ViewModel() {
     private val _uiState = MutableStateFlow(FavoriteContract.UiState())
     val uiState: StateFlow<FavoriteContract.UiState> = _uiState.asStateFlow()
 

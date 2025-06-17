@@ -112,7 +112,7 @@ fun AppNavHost(
                     HomeScreen(navController)
                 }
                 composable(Screen.Favorites.route) {
-                    FavoritesScreen()
+                    FavoritesScreen(navController = navController)
                 }
                 composable(Screen.MyCart.route) {
                     MyCartScreen()
