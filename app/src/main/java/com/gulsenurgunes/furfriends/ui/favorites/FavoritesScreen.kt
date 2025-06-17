@@ -31,6 +31,7 @@ fun FavoritesScreen(
     viewModel: FavoritesViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val selectedCategory by viewModel.selectedCategory.collectAsState()
 
     Scaffold(topBar = {
         TopBar(
@@ -51,7 +52,10 @@ fun FavoritesScreen(
         )
     }) { padding ->
         Column(modifier = Modifier.padding(padding)) {
-            FavoritesItemSection()
+            FavoritesItemSection(
+                selectedCategory = selectedCategory,
+                onCategorySelected = {viewModel.onCategorySelected(it)}
+            )
             when {
                 uiState.isLoading -> {
                     CircularProgressIndicator()

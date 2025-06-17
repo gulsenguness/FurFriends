@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulsenurgunes.furfriends.common.Resource
 import com.gulsenurgunes.furfriends.domain.usecase.favorites.AddToFavoriteUseCase
-import com.gulsenurgunes.furfriends.domain.usecase.order.GetAllProductsUseCase
 import com.gulsenurgunes.furfriends.domain.usecase.favorites.ObserveFavoriteIdsUseCase
 import com.gulsenurgunes.furfriends.domain.usecase.favorites.RemoveFromFavoritesUseCase
+import com.gulsenurgunes.furfriends.domain.usecase.order.GetAllProductsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,15 +27,28 @@ class FavoritesViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(FavoriteContract.UiState())
     val uiState: StateFlow<FavoriteContract.UiState> = _uiState.asStateFlow()
+    private val _selectedCategory = MutableStateFlow("All")
+    val selectedCategory: StateFlow<String> = _selectedCategory.asStateFlow()
 
-    init { collectFavorites(observeFavorites()) }
+
+    init {
+        collectFavorites(observeFavorites())
+    }
 
     private fun collectFavorites(idsFlow: Flow<Set<Int>>) = viewModelScope.launch {
-        combine(idsFlow, flow { emit(getProducts("furfriends")) }) { ids, res ->
-            val list = (res as? Resource.Success)?.data.orEmpty()
+        combine(
+            idsFlow,
+            flow { emit(getProducts("furfriends")) },
+            selectedCategory
+        ) { ids, res, category ->
+            val allFavorites = (res as? Resource.Success)?.data.orEmpty()
                 .filter { ids.contains(it.id) }
                 .map { it.copy(isFavorite = true) }
-            list
+
+            val filtered = if (category == "All") allFavorites
+            else allFavorites.filter { it.category.equals(category, ignoreCase = true) }
+
+            filtered
         }.collect { list ->
             _uiState.update { it.copy(isLoading = false, favoriteProducts = list) }
         }
@@ -46,10 +59,16 @@ class FavoritesViewModel @Inject constructor(
             is FavoriteContract.UiAction.AddToFavorites -> {
                 addToFavorites("defaultUser", action.productId.toString())
             }
+
             is FavoriteContract.UiAction.DeleteFromFavorites -> {
                 removeFromFavorites("defaultUser", action.productId.toString())
             }
+
             is FavoriteContract.UiAction.LoadFavorites -> Unit
         }
+    }
+
+    fun onCategorySelected(category: String) {
+        _selectedCategory.value = category
     }
 }
