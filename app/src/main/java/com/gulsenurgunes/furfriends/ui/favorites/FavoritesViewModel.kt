@@ -1,8 +1,10 @@
 package com.gulsenurgunes.furfriends.ui.favorites
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulsenurgunes.furfriends.common.Resource
+import com.gulsenurgunes.furfriends.domain.usecase.cart.AddToCartUseCase
 import com.gulsenurgunes.furfriends.domain.usecase.favorites.AddToFavoriteUseCase
 import com.gulsenurgunes.furfriends.domain.usecase.favorites.ObserveFavoriteIdsUseCase
 import com.gulsenurgunes.furfriends.domain.usecase.favorites.RemoveFromFavoritesUseCase
@@ -17,19 +19,25 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Named
 
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
     observeFavorites: ObserveFavoriteIdsUseCase,
     private val getProducts: GetAllProductsUseCase,
     private val addToFavorites: AddToFavoriteUseCase,
-    private val removeFromFavorites: RemoveFromFavoritesUseCase
-) : ViewModel() {
+    private val removeFromFavorites: RemoveFromFavoritesUseCase,
+    private val addToCart: AddToCartUseCase,
+    @Named("userId") private val userId: String,
+    ) : ViewModel() {
     private val _uiState = MutableStateFlow(FavoriteContract.UiState())
     val uiState: StateFlow<FavoriteContract.UiState> = _uiState.asStateFlow()
+
     private val _selectedCategory = MutableStateFlow("All")
     val selectedCategory: StateFlow<String> = _selectedCategory.asStateFlow()
 
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery = _searchQuery.asStateFlow()
 
     init {
         collectFavorites(observeFavorites())
@@ -39,14 +47,16 @@ class FavoritesViewModel @Inject constructor(
         combine(
             idsFlow,
             flow { emit(getProducts("furfriends")) },
-            selectedCategory
-        ) { ids, res, category ->
+            selectedCategory,
+            searchQuery
+        ) { ids, res, category, query ->
             val allFavorites = (res as? Resource.Success)?.data.orEmpty()
                 .filter { ids.contains(it.id) }
                 .map { it.copy(isFavorite = true) }
 
-            val filtered = if (category == "All") allFavorites
-            else allFavorites.filter { it.category.equals(category, ignoreCase = true) }
+            val filtered = allFavorites
+                .filter { category == "All" || it.category.equals(category, ignoreCase = true) }
+                .filter { it.title.contains(query, ignoreCase = true) }
 
             filtered
         }.collect { list ->
@@ -64,11 +74,19 @@ class FavoritesViewModel @Inject constructor(
                 removeFromFavorites("defaultUser", action.productId.toString())
             }
 
+            is FavoriteContract.UiAction.AddToCart -> {
+                addToCart(userId, action.product.id)
+            }
+
             is FavoriteContract.UiAction.LoadFavorites -> Unit
         }
     }
 
     fun onCategorySelected(category: String) {
         _selectedCategory.value = category
+    }
+
+    fun onSearchQueryChanged(query: String) {
+        _searchQuery.value = query
     }
 }

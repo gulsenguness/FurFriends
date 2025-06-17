@@ -107,7 +107,7 @@ fun FavoriteItemCard(
                         }
                     }
                     IconButton(
-                        onClick = onAddToCartClick,
+                        onClick = { onAddToCartClick() },
                         modifier = Modifier
                             .size(36.dp)
                             .background(Color.Black, RoundedCornerShape(8.dp))

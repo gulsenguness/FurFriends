@@ -16,6 +16,7 @@ object FavoriteContract {
         data class DeleteFromFavorites(val productId: Int) : UiAction()
         data class LoadFavorites(val favoriteProducts: List<ProductUi>) : UiAction()
         data class AddToFavorites(val productId: Int)    : UiAction()
+        data class AddToCart(val product: ProductUi) : UiAction()
     }
 
     sealed class UiEffect {
