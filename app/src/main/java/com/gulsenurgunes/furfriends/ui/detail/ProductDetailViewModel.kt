@@ -6,6 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gulsenurgunes.furfriends.common.Resource
 import com.gulsenurgunes.furfriends.domain.usecase.cart.AddToCartUseCase
+import com.gulsenurgunes.furfriends.domain.usecase.favorites.AddToFavoriteUseCase
+import com.gulsenurgunes.furfriends.domain.usecase.favorites.ObserveFavoriteIdsUseCase
+import com.gulsenurgunes.furfriends.domain.usecase.favorites.RemoveFromFavoritesUseCase
 import com.gulsenurgunes.furfriends.domain.usecase.order.GetProductDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -23,6 +26,9 @@ import javax.inject.Named
 class ProductDetailViewModel @Inject constructor(
     private val getProductDetailUseCase: GetProductDetailUseCase,
     private val addToCartUseCase: AddToCartUseCase,
+    private val addToFavorites: AddToFavoriteUseCase,
+    private val removeFromFavorites: RemoveFromFavoritesUseCase,
+    private val observeFavoriteIds: ObserveFavoriteIdsUseCase,
     @Named("userId") private val userId: String,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -36,9 +42,12 @@ class ProductDetailViewModel @Inject constructor(
     private val productId: Int = savedStateHandle.get<Int>("productId")
         ?: throw IllegalArgumentException("productId parametresi null ya da Int değil")
     private val storeKey = "FurFriends"
+    private val favoriteIds = MutableStateFlow<Set<Int>>(emptySet())
+
 
     init {
         loadProductDetail()
+        observeFavorites()
     }
 
     private fun loadProductDetail() {
@@ -70,9 +79,25 @@ class ProductDetailViewModel @Inject constructor(
                 val shareText = "Check out this product: ${product?.title} - ₺${product?.price}"
                 sendEffect(ProductDetailContract.UiEffect.ShareProduct(shareText))
             }
-            is ProductDetailContract.UiAction.ToggleFavoriteClick -> {
 
+            is ProductDetailContract.UiAction.ToggleFavoriteClick -> {
+                viewModelScope.launch {
+                    val product = _uiState.value.productDetail ?: return@launch
+                    val isFavorite = favoriteIds.value.contains(product.id)
+                    if (isFavorite) {
+                        removeFromFavorites(userId, product.id.toString())
+                    } else {
+                        addToFavorites(userId, product.id.toString())
+                    }
+                    _uiState.update { state ->
+                        state.copy(
+                            productDetail = product.copy(isFavorite = !isFavorite)
+                        )
+                    }
+                }
             }
+
+
             is ProductDetailContract.UiAction.AddToCartClick -> {
                 viewModelScope.launch {
                     val pid = action.productDetail.id ?: return@launch
@@ -86,11 +111,14 @@ class ProductDetailViewModel @Inject constructor(
                         sendEffect(ProductDetailContract.UiEffect.NavigateToCart)
                     } else {
                         Log.e("CART_FLOW", "add → failed", result.exceptionOrNull())
-                        sendEffect(ProductDetailContract.UiEffect.ShowToastMessage(result.exceptionOrNull()?.message ?: "Ekleme hatası"))
+                        sendEffect(
+                            ProductDetailContract.UiEffect.ShowToastMessage(
+                                result.exceptionOrNull()?.message ?: "Ekleme hatası"
+                            )
+                        )
                     }
                 }
             }
-
         }
     }
 
@@ -100,4 +128,18 @@ class ProductDetailViewModel @Inject constructor(
         }
     }
 
+    private fun observeFavorites() {
+        viewModelScope.launch {
+            observeFavoriteIds().collect { ids ->
+                favoriteIds.value = ids
+                _uiState.update { state ->
+                    state.copy(
+                        productDetail = state.productDetail?.copy(
+                            isFavorite = ids.contains(state.productDetail.id)
+                        )
+                    )
+                }
+            }
+        }
+    }
 }

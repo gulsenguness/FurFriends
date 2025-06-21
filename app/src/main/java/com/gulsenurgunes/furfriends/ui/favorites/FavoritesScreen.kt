@@ -25,12 +25,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.gulsenurgunes.furfriends.navigation.TopBar
+import com.gulsenurgunes.furfriends.ui.components.ItemCard
 
 @Composable
 fun FavoritesScreen(
@@ -55,7 +54,7 @@ fun FavoritesScreen(
                     trailingIcon = {
                         IconButton(onClick = {
                             isSearching = false
-                            viewModel.onSearchQueryChanged("") // Arama kutusu kapanınca temizlik
+                            viewModel.onSearchQueryChanged("")
                         }) {
                             Icon(Icons.Default.Search, contentDescription = "Kapat")
                         }
@@ -64,15 +63,8 @@ fun FavoritesScreen(
             } else {
                 TopBar(
                     title = {
-                        Column {
+                        Row  {
                             Text("Wishlist")
-                            Row {
-                                Text(
-                                    text = "${uiState.favoriteProducts.size} Items",
-                                    fontSize = 14.sp
-                                )
-                                Text(text = "Total: $213 ", fontSize = 14.sp)
-                            }
                         }
                     },
                     actions = {
@@ -110,22 +102,22 @@ fun FavoritesScreen(
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(uiState.favoriteProducts) { product ->
-                            FavoriteItemCard(
+                            ItemCard(
                                 product = product,
-                                onRemoveClick = {
-                                    viewModel.onAction(
-                                        FavoriteContract.UiAction.DeleteFromFavorites(
-                                            product.id
-                                        )
-                                    )
-                                },
-                                onAddToCartClick = {
-                                    viewModel.onAction(FavoriteContract.UiAction.AddToCart(product))
-                                },
                                 onClick = {
                                     navController.navigate("detail/${product.id}")
-                                }
+                                },
+                                onCartClick = {
+                                    viewModel.onAction(FavoriteContract.UiAction.AddToCart(product))
+                                },
+                                onTopRightIconClick = {
+                                    viewModel.onAction(
+                                        FavoriteContract.UiAction.DeleteFromFavorites(product.id)
+                                    )
+                                },
+                                isFavoriteMode = false
                             )
+
                         }
                     }
                 }

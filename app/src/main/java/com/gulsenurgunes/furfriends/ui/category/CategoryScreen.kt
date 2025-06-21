@@ -111,8 +111,9 @@ fun CategoryScreen(
 
                 else -> {
                     items(state.categoryList) { category ->
-                        CategoryCollection(category)
-                    }
+                        CategoryCollection(category = category) { selectedCategoryKey ->
+                            navController.navigate(Screen.CategoryGroup.createRoute(selectedCategoryKey))
+                        }                    }
                 }
             }
         }

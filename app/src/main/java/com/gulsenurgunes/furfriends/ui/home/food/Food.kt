@@ -2,6 +2,7 @@ package com.gulsenurgunes.furfriends.ui.home.food
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,13 +39,15 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.gulsenurgunes.furfriends.domain.model.ProductUi
 import com.gulsenurgunes.furfriends.ui.components.DividerC
 
 @Composable
 fun Food(
-    viewModel: FoodViewModel = hiltViewModel()
+    viewModel: FoodViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -93,7 +96,12 @@ fun Food(
                         row.forEach { product ->
                             FoodCard(
                                 product = product,
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier.weight(1f),
+                                onClick = {
+                                    product?.let {
+                                        navController.navigate("detail/${it.id}")
+                                    }
+                                }
                             )
                         }
                     }
@@ -156,11 +164,19 @@ fun CategoryTabs(
 }
 
 @Composable
-fun FoodCard(product: ProductUi?, modifier: Modifier = Modifier) {
+fun FoodCard(
+    product: ProductUi?,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
+) {
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .height(240.dp),
+            .height(240.dp)
+            .clickable(
+                enabled = product != null,
+                onClick = onClick
+            ),
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(1.dp, Color.Black),
         elevation = CardDefaults.cardElevation(4.dp),

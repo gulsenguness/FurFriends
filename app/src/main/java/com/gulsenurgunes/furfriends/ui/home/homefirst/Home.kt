@@ -46,7 +46,7 @@ fun Home(
         PetGrooming()
         Video()
         DividerC()
-        Food()
+        Food(navController = navController)
         MiddleImages()
     }
 }

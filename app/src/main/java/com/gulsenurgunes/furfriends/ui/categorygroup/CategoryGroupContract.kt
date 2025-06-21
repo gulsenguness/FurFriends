@@ -21,5 +21,6 @@ object CategoryGroupContract {
         data class ShowError(val message: String) : UiEffect()
         object NavigateBack : UiEffect()
         data class OpenDetail(val productId: Int) : UiEffect()
+        data class ShowToast(val message: String) : UiEffect()
     }
 }

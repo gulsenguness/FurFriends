@@ -3,6 +3,7 @@ package com.gulsenurgunes.furfriends.ui.category
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,10 +45,12 @@ import com.gulsenurgunes.furfriends.domain.model.Category
 fun CategoryCollection(
     category: Category,
     onRemove: () -> Unit = {},
+    onClick: (String) -> Unit
 ) {
     Card(
         modifier = Modifier
             .width(200.dp)
+            .clickable { onClick(category.name) }
             .border(
                 width = 1.dp,
                 color = Color.Black,

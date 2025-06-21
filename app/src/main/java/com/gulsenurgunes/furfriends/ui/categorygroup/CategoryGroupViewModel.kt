@@ -6,9 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.gulsenurgunes.furfriends.common.Resource
 import com.gulsenurgunes.furfriends.domain.model.ProductUi
 import com.gulsenurgunes.furfriends.domain.usecase.favorites.AddToFavoriteUseCase
-import com.gulsenurgunes.furfriends.domain.usecase.order.GetAllProductsUseCase
 import com.gulsenurgunes.furfriends.domain.usecase.favorites.ObserveFavoriteIdsUseCase
 import com.gulsenurgunes.furfriends.domain.usecase.favorites.RemoveFromFavoritesUseCase
+import com.gulsenurgunes.furfriends.domain.usecase.order.GetAllProductsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,11 +34,11 @@ class CategoryGroupViewModel @Inject constructor(
     val uiEffect = _uiEffect.receiveAsFlow()
 
     private val favoriteIds = MutableStateFlow<Set<Int>>(emptySet())
-    private val categoryKey = savedStateHandle.get<String>("categoryKey").orEmpty()
+    val categoryKey = savedStateHandle.get<String>("categoryKey").orEmpty()
     private val storeKey = "furfriends"
 
     init {
-        viewModelScope.launch {                                                  // ⭐
+        viewModelScope.launch {
             observeFavoriteIds().collect { ids ->
                 favoriteIds.value = ids
                 _uiState.update { state ->
@@ -54,17 +54,18 @@ class CategoryGroupViewModel @Inject constructor(
         loadProducts()
     }
 
-
     private fun loadProducts() = viewModelScope.launch {
         _uiState.update { it.copy(isLoading = true, errorMessage = null) }
 
         when (val res = getProductsByCategory(storeKey)) {
             is Resource.Success -> {
-                val filtered = res.data
-                    .filter { it.title.contains(categoryKey, ignoreCase = true) }
-                    .map { it.copy(isFavorite = favoriteIds.value.contains(it.id)) } // ⭐
+                val filtered = res.data.filter {
+                    it.category.equals(categoryKey, ignoreCase = true) || it.title.contains(categoryKey, ignoreCase = true)
+                }
+                    .map { it.copy(isFavorite = favoriteIds.value.contains(it.id)) }
                 _uiState.update { it.copy(products = filtered) }
             }
+
             is Resource.Error -> {
                 _uiState.update { it.copy(errorMessage = res.message) }
             }
@@ -73,7 +74,7 @@ class CategoryGroupViewModel @Inject constructor(
     }
 
 
-    fun toggleFavorite(product: ProductUi) = viewModelScope.launch {              // ⭐
+    fun toggleFavorite(product: ProductUi) = viewModelScope.launch {
         _uiState.update { state ->
             state.copy(
                 products = state.products.map { p ->
@@ -87,5 +88,7 @@ class CategoryGroupViewModel @Inject constructor(
             addToFavorites("defaultUser", product.id.toString())
         }
     }
+
+
 
 }

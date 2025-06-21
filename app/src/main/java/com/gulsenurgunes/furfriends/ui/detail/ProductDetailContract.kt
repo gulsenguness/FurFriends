@@ -12,7 +12,7 @@ object ProductDetailContract {
     )
 
     sealed class UiAction {
-        data object ToggleFavoriteClick : UiAction()
+        data class ToggleFavoriteClick(val product: ProductDetail) : UiAction()
         data class AddToCartClick(val productDetail: ProductDetail) : UiAction()
         data object BackButtonClick : UiAction()
         data object ShareProduct : UiAction()

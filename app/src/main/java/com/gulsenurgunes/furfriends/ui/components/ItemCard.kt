@@ -1,4 +1,4 @@
-package com.gulsenurgunes.furfriends.ui.favorites
+package com.gulsenurgunes.furfriends.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -18,12 +18,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,11 +41,12 @@ import coil.compose.AsyncImage
 import com.gulsenurgunes.furfriends.domain.model.ProductUi
 
 @Composable
-fun FavoriteItemCard(
+fun ItemCard(
     product: ProductUi,
-    onRemoveClick: () -> Unit,
-    onAddToCartClick: () -> Unit,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onCartClick: () -> Unit,
+    onTopRightIconClick: () -> Unit,
+    isFavoriteMode: Boolean
 ) {
     Card(
         modifier = Modifier
@@ -67,26 +69,31 @@ fun FavoriteItemCard(
                         .height(150.dp)
                         .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
                 )
+
                 HorizontalDivider(
                     modifier = Modifier.fillMaxWidth(),
                     thickness = 1.dp,
                     color = Color.LightGray
                 )
                 Spacer(Modifier.height(8.dp))
+
                 Text(
                     text = product.category,
                     fontSize = 18.sp,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                        .padding(horizontal = 8.dp),
                     fontWeight = FontWeight.SemiBold,
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 1
                 )
+
+                Spacer(Modifier.height(4.dp))
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                        .padding(horizontal = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
@@ -108,29 +115,44 @@ fun FavoriteItemCard(
                             )
                         }
                     }
-                    IconButton(
-                        onClick = { onAddToCartClick() },
+
+                    Box(
                         modifier = Modifier
-                            .size(36.dp)
-                            .background(Color.Black, RoundedCornerShape(8.dp))
+                            .size(32.dp)
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(Color.Black)
+                            .clickable { onCartClick() },
+                        contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            Icons.Default.ShoppingCart,
-                            contentDescription = null,
-                            tint = Color.White
+                            imageVector = Icons.Default.ShoppingCart,
+                            contentDescription = "Add to cart",
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                 }
             }
-            IconButton(
-                onClick = onRemoveClick,
+
+            Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(top = 12.dp, end = 12.dp)
-                    .size(31.dp)
+                    .padding(8.dp)
+                    .size(28.dp)
                     .background(Color.White, CircleShape)
+                    .clickable { onTopRightIconClick() },
+                contentAlignment = Alignment.Center
             ) {
-                Icon(Icons.Default.Close, contentDescription = null, tint = Color.Black)
+                Icon(
+                    imageVector = if (isFavoriteMode) {
+                        if (product.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder
+                    } else {
+                        Icons.Default.Close
+                    },
+                    contentDescription = if (isFavoriteMode) "Toggle Favorite" else "Remove",
+                    tint = if (isFavoriteMode && product.isFavorite) Color.Red else Color.Black,
+                    modifier = Modifier.size(16.dp)
+                )
             }
         }
     }

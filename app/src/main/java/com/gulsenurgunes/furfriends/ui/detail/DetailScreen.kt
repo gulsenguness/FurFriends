@@ -83,8 +83,8 @@ fun DetailScreen(
             TopBar(
                 title = { Text("Product Details") },
                 navigationIcon = {
-                    IconButton(onClick = {}) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 actions = {
@@ -124,8 +124,10 @@ fun DetailScreen(
                         product.isFavorite?.let {
                             ImageSection(
                                 imageUrls = images,
-                                isFavorite = it,
-                                onFavoriteClick = { }
+                                isFavorite = product.isFavorite == true,
+                                onFavoriteClick = {
+                                    viewModel.onAction(ProductDetailContract.UiAction.ToggleFavoriteClick(product))
+                                }
                             )
                         }
 
