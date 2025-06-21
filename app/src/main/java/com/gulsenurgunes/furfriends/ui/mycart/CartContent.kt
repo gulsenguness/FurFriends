@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
@@ -113,7 +112,8 @@ fun CartContent(
         Spacer(Modifier.height(12.dp))
         LazyColumn(
             modifier = Modifier
-                .fillMaxHeight()                 .padding(top = 4.dp),
+                .weight(1f)
+                .padding(top = 4.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             items(items, key = { it.id }) { item ->
