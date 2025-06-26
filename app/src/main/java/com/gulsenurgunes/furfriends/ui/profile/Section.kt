@@ -1,5 +1,6 @@
 package com.gulsenurgunes.furfriends.ui.profile
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,16 +16,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun Section(title:String){
+fun Section(title: String) {
     Text(
         text = title,
-        fontSize =24.sp,
+        fontSize = 24.sp,
         style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
         modifier = Modifier
             .fillMaxWidth()
@@ -33,19 +34,24 @@ fun Section(title:String){
 }
 
 @Composable
-fun SectionInside(icon: ImageVector, text: String,){
+fun SectionInside(
+    icon: Int,
+    text: String,
+    onClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = {})
+            .clickable(onClick = onClick)
             .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            imageVector = icon,
+        Image(
+            painter = painterResource(id = icon),
             contentDescription = null,
             modifier = Modifier.size(20.dp)
         )
+
         Spacer(Modifier.width(16.dp))
         Text(
             text = text,

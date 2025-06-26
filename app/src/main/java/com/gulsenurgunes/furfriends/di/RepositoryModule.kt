@@ -1,9 +1,11 @@
 package com.gulsenurgunes.furfriends.di
 
+import com.gulsenurgunes.furfriends.data.repository.AddressRepositoryImpl
 import com.gulsenurgunes.furfriends.data.repository.CartRepositoryImpl
 import com.gulsenurgunes.furfriends.data.repository.CategoryRepositoryImpl
 import com.gulsenurgunes.furfriends.data.repository.FavoriteRepositoryImpl
 import com.gulsenurgunes.furfriends.data.repository.ProductRepositoryImpl
+import com.gulsenurgunes.furfriends.domain.repository.AddressRepository
 import com.gulsenurgunes.furfriends.domain.repository.CartRepository
 import com.gulsenurgunes.furfriends.domain.repository.CategoryRepository
 import com.gulsenurgunes.furfriends.domain.repository.FavoriteRepository
@@ -41,4 +43,10 @@ abstract class RepositoryModule {
     abstract fun bindCartRepository(
         impl: CartRepositoryImpl
     ): CartRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAddressRepository(
+        impl: AddressRepositoryImpl
+    ): AddressRepository
 }

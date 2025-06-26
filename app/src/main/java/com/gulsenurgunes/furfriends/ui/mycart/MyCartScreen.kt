@@ -15,12 +15,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.gulsenurgunes.furfriends.navigation.Screen
 
 @Composable
 fun MyCartScreen(
     viewModel: MyCartViewModel = hiltViewModel(),
     onChangeAddress: () -> Unit = {},
-    onDismiss: () -> Unit = {}
+    onDismiss: () -> Unit = {},
+    navController: NavController
 ) {
     val state by viewModel.uiState.collectAsState()
     val context = LocalContext.current
@@ -55,6 +58,9 @@ fun MyCartScreen(
                 onChangeAddress = onChangeAddress,
                 onDelete = { item ->
                     viewModel.onAction(MyCartContract.UiAction.DeleteItem(item.id))
+                },
+                onProceedToBuy = {
+                    navController.navigate(Screen.DeliveryAddress.route)
                 }
             )
         }

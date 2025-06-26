@@ -1,6 +1,5 @@
 package com.gulsenurgunes.furfriends.ui.fullpayment.deliveryaddress
 
-
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,8 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -28,14 +25,26 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.gulsenurgunes.furfriends.ui.auth.components.AuthButton
 import com.gulsenurgunes.furfriends.ui.fullpayment.checkout.CheckoutAddressCartSection
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DeliveryAddress() {
+fun DeliveryAddress(
+    navController: NavController,
+    viewModel: CheckoutSharedViewModel = hiltViewModel()
+) {
+    val addressList = listOf(
+        "123 Main Street, Anytown, USA 12345",
+        "456 Elm Avenue, Smallville, CA 98765",
+        "789 Maple Lane, Suburbia, NY 54321",
+        "654 Pine Road, Countryside, FL 34567"
+    )
+
+    var selectedAddress by rememberSaveable { mutableStateOf(addressList[0]) }
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -65,34 +74,17 @@ fun DeliveryAddress() {
             contentAlignment = Alignment.TopStart
         ){
             Column {
-                CheckoutAddressCartSection(
-                    leadingIcon = Icons.Default.Home,
-                    lastIcon = Icons.Default.Favorite,
-                    title = "Home Address",
-                    subtitle = "123 Main Street, Anytown, USA 12345",
-                    onClick = { }
-                )
-                CheckoutAddressCartSection(
-                    leadingIcon = Icons.Default.LocationOn,
-                    lastIcon = Icons.Default.Favorite,
-                    title = "Office Address",
-                    subtitle = "123 Main Street, Anytown, USA 12345",
-                    onClick = { }
-                )
-                CheckoutAddressCartSection(
-                    leadingIcon = Icons.Default.Home,
-                    lastIcon = Icons.Default.Favorite,
-                    title = "Home Address",
-                    subtitle = "123 Main Street, Anytown, USA 12345",
-                    onClick = { }
-                )
-                CheckoutAddressCartSection(
-                    leadingIcon = Icons.Default.ShoppingCart,
-                    lastIcon = Icons.Default.Favorite,
-                    title = "Shop Address",
-                    subtitle = "123 Main Street, Anytown, USA 12345",
-                    onClick = { }
-                )
+                addressList.forEach { address ->
+                    CheckoutAddressCartSection(
+                        leadingIcon = Icons.Default.Home,
+                        lastIcon = Icons.Default.Favorite,
+                        title = "Address",
+                        subtitle = address,
+                        onClick = {
+                            selectedAddress = address
+                        }
+                    )
+                }
                 var notes by rememberSaveable { mutableStateOf("") }
                 OutlinedTextField(
                     value = notes,
@@ -111,9 +103,3 @@ fun DeliveryAddress() {
     }
 }
 
-
-@Preview(showBackground = true)
-@Composable
-fun DeliveryAddressPreview() {
-    DeliveryAddress()
-}

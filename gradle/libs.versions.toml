@@ -3,6 +3,7 @@ agp = "8.9.2"
 coilCompose = "2.4.0"
 datastorePreferences = "1.1.7"
 firebaseBom = "33.13.0"
+firebaseFirestoreKtx = "25.1.4"
 hiltNavigationCompose = "1.2.0"
 kotlinxSerializationJson = "1.7.3"
 ksp = "2.0.21-1.0.27"
@@ -29,6 +30,7 @@ androidx-navigation-compose = { module = "androidx.navigation:navigation-compose
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-firestore-ktx = { module = "com.google.firebase:firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

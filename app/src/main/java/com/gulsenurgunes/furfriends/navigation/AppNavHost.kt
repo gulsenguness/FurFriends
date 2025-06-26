@@ -13,6 +13,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.gulsenurgunes.furfriends.ui.profile.cards.addcard.AddCardScreen
 import com.gulsenurgunes.furfriends.ui.auth.entercode.EnterCode
 import com.gulsenurgunes.furfriends.ui.auth.enternewpassword.EnterNewPassword
 import com.gulsenurgunes.furfriends.ui.auth.forgot.ForgotScreen
@@ -20,14 +21,18 @@ import com.gulsenurgunes.furfriends.ui.auth.signin.SignInScreen
 import com.gulsenurgunes.furfriends.ui.auth.signup.SignUpScreen
 import com.gulsenurgunes.furfriends.ui.auth.splash.PageOne
 import com.gulsenurgunes.furfriends.ui.auth.splash.PageTwo
-import com.gulsenurgunes.furfriends.ui.category.CategoryScreen
-import com.gulsenurgunes.furfriends.ui.categorygroup.CategoryGroup
+import com.gulsenurgunes.furfriends.ui.categoryfull.category.CategoryScreen
+import com.gulsenurgunes.furfriends.ui.categoryfull.categorygroup.CategoryGroup
 import com.gulsenurgunes.furfriends.ui.detail.DetailScreen
+import com.gulsenurgunes.furfriends.ui.profile.editprofile.EditProfileScreen
 import com.gulsenurgunes.furfriends.ui.favorites.FavoritesScreen
+import com.gulsenurgunes.furfriends.ui.fullpayment.deliveryaddress.DeliveryAddress
 import com.gulsenurgunes.furfriends.ui.home.homefirst.HomeScreen
 import com.gulsenurgunes.furfriends.ui.mycart.MyCartScreen
 import com.gulsenurgunes.furfriends.ui.navigation.BottomNavigationBar
 import com.gulsenurgunes.furfriends.ui.profile.ProfileScreen
+import com.gulsenurgunes.furfriends.ui.profile.address.savedaddress.SavedAddressesScreen
+import com.gulsenurgunes.furfriends.ui.profile.cards.savedcards.SavedCardsScreen
 
 @Composable
 fun AppNavHost(
@@ -115,13 +120,13 @@ fun AppNavHost(
                     FavoritesScreen(navController = navController)
                 }
                 composable(Screen.MyCart.route) {
-                    MyCartScreen()
+                    MyCartScreen(navController = navController)
                 }
                 composable(Screen.Category.route) {
                     CategoryScreen(navController)
                 }
                 composable(Screen.Profile.route) {
-                    ProfileScreen()
+                    ProfileScreen(navController)
                 }
                 composable(
                     route = Screen.CategoryGroup.route,
@@ -146,7 +151,36 @@ fun AppNavHost(
                         DetailScreen(navController)
                     }
                 }
-
+                composable(
+                    Screen.EditProfile.route
+                ) {
+                    EditProfileScreen(
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
+                composable(
+                    Screen.SavedCards.route
+                ) {
+                    SavedCardsScreen(
+                        onBackClick = { navController.popBackStack() },
+                        navController
+                    )
+                }
+                composable(
+                    Screen.AddCards.route
+                ) {
+                    AddCardScreen()
+                }
+                composable(
+                    Screen.SavedAddresses.route
+                ) {
+                    SavedAddressesScreen(navController)
+                }
+                composable(
+                    Screen.DeliveryAddress.route
+                ) {
+                    DeliveryAddress(navController)
+                }
             }
         }
     }
