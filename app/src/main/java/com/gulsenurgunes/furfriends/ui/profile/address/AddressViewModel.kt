@@ -1,4 +1,4 @@
-package com.gulsenurgunes.furfriends.ui.profile.address.savedaddress
+package com.gulsenurgunes.furfriends.ui.profile.address
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

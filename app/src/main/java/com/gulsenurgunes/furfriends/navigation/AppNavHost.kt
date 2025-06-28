@@ -26,7 +26,7 @@ import com.gulsenurgunes.furfriends.ui.categoryfull.categorygroup.CategoryGroup
 import com.gulsenurgunes.furfriends.ui.detail.DetailScreen
 import com.gulsenurgunes.furfriends.ui.profile.editprofile.EditProfileScreen
 import com.gulsenurgunes.furfriends.ui.favorites.FavoritesScreen
-import com.gulsenurgunes.furfriends.ui.fullpayment.deliveryaddress.DeliveryAddress
+import com.gulsenurgunes.furfriends.ui.profile.address.deliveryaddress.DeliveryAddress
 import com.gulsenurgunes.furfriends.ui.home.homefirst.HomeScreen
 import com.gulsenurgunes.furfriends.ui.mycart.MyCartScreen
 import com.gulsenurgunes.furfriends.ui.navigation.BottomNavigationBar

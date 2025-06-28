@@ -1,4 +1,4 @@
-package com.gulsenurgunes.furfriends.ui.category
+package com.gulsenurgunes.furfriends.ui.categoryfull.category
 
 import com.gulsenurgunes.furfriends.domain.model.Category
 import com.gulsenurgunes.furfriends.domain.model.ProductUi

@@ -17,7 +17,6 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.gulsenurgunes.furfriends.domain.model.AddressModel
+import com.gulsenurgunes.furfriends.ui.auth.components.LabeledTextField
+import com.gulsenurgunes.furfriends.ui.profile.address.AddressViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -96,16 +97,49 @@ fun SavedAddressesScreen(
         ) {
             Text("Contact Details", fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(8.dp))
-            OutlinedTextField(value = fullName, onValueChange = { fullName = it }, label = { Text("Full Name") })
-            OutlinedTextField(value = phone, onValueChange = { phone = it }, label = { Text("Mobile No.") })
+            LabeledTextField(
+                label = "Full Name",
+                value = fullName,
+                onValueChange = { fullName = it },
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            LabeledTextField(
+                label = "Mobile No.",
+                value = phone,
+                onValueChange = { phone = it },
+            )
             Spacer(Modifier.height(16.dp))
             Text("Address", fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(8.dp))
-            OutlinedTextField(value = pinCode, onValueChange = { pinCode = it }, label = { Text("Pin Code") })
-            OutlinedTextField(value = addressLine, onValueChange = { addressLine = it }, label = { Text("Address") })
-            OutlinedTextField(value = locality, onValueChange = { locality = it }, label = { Text("Locality/Town") })
-            OutlinedTextField(value = city, onValueChange = { city = it }, label = { Text("City/District") })
-            OutlinedTextField(value = state, onValueChange = { state = it }, label = { Text("State") })
+            LabeledTextField(
+                label = "Pin Code.",
+                value = pinCode,
+                onValueChange = { pinCode = it },
+            )
+            Spacer(Modifier.height(8.dp))
+            LabeledTextField(
+                label = "Address",
+                value = addressLine,
+                onValueChange = { addressLine = it },
+            )
+            Spacer(Modifier.height(8.dp))
+            LabeledTextField(
+                label = "Locality/Town",
+                value = locality,
+                onValueChange = { locality = it },
+            )
+            Spacer(Modifier.height(8.dp))
+            LabeledTextField(
+                label = "City/District",
+                value = city,
+                onValueChange = { city = it },
+            )
+            Spacer(Modifier.height(8.dp))
+            LabeledTextField(
+                label = "State",
+                value = state,
+                onValueChange = { state = it },
+            )
             Spacer(Modifier.height(16.dp))
             Text("Save Address As", fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(8.dp))
@@ -123,6 +157,13 @@ fun SavedAddressesScreen(
                         Text(type)
                     }
                 }
+            }
+
+            Text("Saved Addresses", fontWeight = FontWeight.Bold)
+            Spacer(Modifier.height(8.dp))
+
+            viewModel.addresses.forEach { address ->
+                Text(text = "${address.fullName} - ${address.addressLine}")
             }
         }
     }

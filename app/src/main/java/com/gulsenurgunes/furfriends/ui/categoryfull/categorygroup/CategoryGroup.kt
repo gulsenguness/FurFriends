@@ -1,4 +1,4 @@
-package com.gulsenurgunes.furfriends.ui.categorygroup
+package com.gulsenurgunes.furfriends.ui.categoryfull.categorygroup
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

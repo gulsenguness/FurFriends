@@ -34,10 +34,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.google.firebase.auth.FirebaseAuth
 import com.gulsenurgunes.furfriends.R
 import com.gulsenurgunes.furfriends.navigation.TopBar
 
@@ -48,6 +48,7 @@ fun HomeScreen(
 ) {
     val uiState by homeViewModel.uiState.collectAsState()
     val snackHost = remember { SnackbarHostState() }
+    val displayName = FirebaseAuth.getInstance().currentUser?.displayName ?: "Kullanıcı"
     LaunchedEffect(Unit) {
         homeViewModel.effect.collect { eff ->
             when (eff) {
@@ -61,7 +62,11 @@ fun HomeScreen(
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackHost) },
-        topBar = { HomeTopBar { homeViewModel.onAction(HomeContract.UiAction.LoadHome) } }
+        topBar = {
+            HomeTopBar(
+                onSearch = {}, displayName = displayName,showIcons = true
+            )
+        }
     ) { padding ->
         Box(
             modifier = Modifier
@@ -86,25 +91,34 @@ fun HomeScreen(
 
 
 @Composable
-fun HomeTopBar(onSearch: () -> Unit) = TopBar(
+fun HomeTopBar(
+    onSearch: () -> Unit,
+    displayName: String = "Kullanıcı",
+    showIcons: Boolean = true,
+) = TopBar(
     title = {
         Image(
             painterResource(R.drawable.first),
             contentDescription = null,
-            modifier = Modifier.size(32.dp).clip(CircleShape)
+            modifier = Modifier
+                .size(32.dp)
+                .clip(CircleShape)
         )
         Spacer(Modifier.width(8.dp))
-        Text("Hello, Gülşen Güneş")
+        Text("Hello, $displayName")
     },
     actions = {
-        IconButton(onClick = {  }) {
-            BadgedBox(badge = { Badge { Text("2") } }) {
-                Icon(Icons.Default.Notifications, contentDescription = null)
+        if (showIcons) {
+            IconButton(onClick = { }) {
+                BadgedBox(badge = { Badge { Text("2") } }) {
+                    Icon(Icons.Default.Notifications, contentDescription = null)
+                }
+            }
+            IconButton(onClick = onSearch) {
+                Icon(Icons.Default.Search, contentDescription = "Ara")
             }
         }
-        IconButton(onClick = onSearch) {
-            Icon(Icons.Default.Search, contentDescription = "Ara")
-        }
+
     }
 )
 

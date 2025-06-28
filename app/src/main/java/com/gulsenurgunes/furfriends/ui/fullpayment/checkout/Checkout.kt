@@ -17,9 +17,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.RadioButtonChecked
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.outlined.RadioButtonUnchecked
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -85,7 +88,8 @@ fun Checkout() {
                     lastIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     title = "Delivery Address",
                     subtitle = "123 Main Street, Anytown, USA 12345",
-                    onClick = { }
+                    onClick = { },
+                    isSelected = false
                 )
                 DividerC()
                 CheckoutAddressCartSection(
@@ -93,7 +97,8 @@ fun Checkout() {
                     lastIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     title = "Cart",
                     subtitle = "XXXX XXXX XXXX 3456",
-                    onClick = { }
+                    onClick = { },
+                    isSelected = false
                 )
                 DividerC()
                 Spacer(Modifier.height(20.dp))
@@ -158,6 +163,7 @@ fun CheckoutAddressCartSection(
     lastIcon: ImageVector,
     title: String,
     subtitle: String,
+    isSelected: Boolean,
     onClick: () -> Unit = {}
 ) {
     Row(
@@ -181,32 +187,28 @@ fun CheckoutAddressCartSection(
             )
         }
         Spacer(Modifier.width(16.dp))
-        Column(Modifier
-            .weight(1f)
-            .fillMaxWidth()) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+        ) {
             Text(
-                text = title.trim(),
+                text = title,
                 style = MaterialTheme.typography.titleMedium.copy(
-                    fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
-                ),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                softWrap = false
+                )
             )
-
             Text(
                 text = subtitle,
                 style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp),
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
-
-
         }
         Icon(
-            imageVector = lastIcon,
+            imageVector = if (isSelected) Icons.Filled.RadioButtonChecked else Icons.Outlined.RadioButtonUnchecked,
             contentDescription = null,
-            tint = Color.Black,
+            tint = if (isSelected) Color.Black else Color.Gray,
             modifier = Modifier.size(24.dp)
         )
     }

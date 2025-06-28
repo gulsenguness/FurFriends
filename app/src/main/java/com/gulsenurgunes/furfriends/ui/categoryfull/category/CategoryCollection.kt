@@ -1,4 +1,4 @@
-package com.gulsenurgunes.furfriends.ui.category
+package com.gulsenurgunes.furfriends.ui.categoryfull.category
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
