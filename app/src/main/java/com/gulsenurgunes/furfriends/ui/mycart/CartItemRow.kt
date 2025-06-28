@@ -14,14 +14,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -124,46 +123,12 @@ fun CartItemRow(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
-            )  {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Spacer(modifier = Modifier.width(8.dp))
-                    IconButton(
-                        onClick = { onQuantityChange(item.id.toString(), item.quantity - 1) },
-                        modifier = Modifier
-                            .size(20.dp)
-                            .background(Color.Black, shape = CircleShape)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.remove),
-                            contentDescription = "Decrease",
-                            tint = Color.White,
-                            modifier = Modifier.size(16.dp)
-                        )
-
-                    }
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Text(
-                        text = item.quantity.toString(),
-                        fontSize = 16.sp,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Spacer(modifier = Modifier.width(16.dp))
-                    IconButton(
-                        onClick = { onQuantityChange(item.id.toString(), item.quantity + 1) },
-                        modifier = Modifier
-                            .size(20.dp)
-                            .background(Color.Black, shape = CircleShape)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Increase",
-                            tint = Color.White,
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
-                }
+            ) {
+                QuantitySelector(
+                    quantity = item.quantity,
+                    onDecrease = { onQuantityChange(item.id.toString(), item.quantity - 1) },
+                    onIncrease = { onQuantityChange(item.id.toString(), item.quantity + 1) }
+                )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.clickable { onDelete() }
@@ -184,3 +149,46 @@ fun CartItemRow(
         }
     }
 }
+
+
+@Composable
+fun QuantitySelector(
+    quantity: Int,
+    onDecrease: () -> Unit,
+    onIncrease: () -> Unit
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        modifier = Modifier
+            .background(Color(0xFFF0F0F0), RoundedCornerShape(20.dp))
+            .padding(horizontal = 10.dp, vertical = 4.dp)
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.remove),
+            contentDescription = "Decrease",
+            tint = Color.Black,
+            modifier = Modifier
+                .size(18.dp)
+                .clickable { onDecrease() }
+        )
+
+        Text(
+            text = quantity.toString(),
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.width(24.dp),
+            textAlign = TextAlign.Center
+        )
+
+        Icon(
+            imageVector = Icons.Default.Add,
+            contentDescription = "Increase",
+            tint = Color.Black,
+            modifier = Modifier
+                .size(18.dp)
+                .clickable { onIncrease() }
+        )
+    }
+}
+
