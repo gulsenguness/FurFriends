@@ -1,3 +1,6 @@
+![image](https://github.com/user-attachments/assets/c715b767-2d10-440f-ab29-f3962f1224a6)
+![image](https://github.com/user-attachments/assets/fa234822-16cd-4d67-b2f1-950f7ba4df1b)
+
 # 🐾 FurFriends – Pet Adoption & eCommerce App
 
 Başlangıçta bir **e-ticaret** projesi olarak başladı ama…  
@@ -34,8 +37,7 @@ Asıl hedefim, minik patilere yuva bulabileceğimiz bir uygulama geliştirmekti!
 | **SafeApiCall & Resource** | Temiz hata yönetimi
 
 ---
-![image](https://github.com/user-attachments/assets/c715b767-2d10-440f-ab29-f3962f1224a6)
-![image](https://github.com/user-attachments/assets/fa234822-16cd-4d67-b2f1-950f7ba4df1b)
+
 
 
 
