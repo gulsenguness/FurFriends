@@ -25,5 +25,6 @@ sealed class Screen(val route: String) {
     data object DeliveryAddress :Screen("delivery_address")
     data object SavedAddresses :Screen("saved_addresses")
     data object Checkout :Screen("checkout")
+    data object Map :Screen("map")
 }
 

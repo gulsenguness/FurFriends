@@ -1,5 +1,6 @@
 package com.gulsenurgunes.furfriends.ui.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,10 +21,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.gulsenurgunes.furfriends.R
+import com.gulsenurgunes.furfriends.navigation.Screen
 
 @Composable
-fun PetGrooming() {
+fun PetGrooming(
+    navController: NavController
+) {
     Column(
         modifier = Modifier.padding(16.dp)
     ) {
@@ -47,7 +52,12 @@ fun PetGrooming() {
                 )
             }
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.clickable {
+                    navController.navigate(Screen.Map.route)
+                }
+            ) {
                 Text(
                     text = "Adopt A Pet",
                     fontSize = 16.sp,

@@ -29,6 +29,7 @@ import com.gulsenurgunes.furfriends.ui.favorites.FavoritesScreen
 import com.gulsenurgunes.furfriends.ui.fullpayment.checkout.Checkout
 import com.gulsenurgunes.furfriends.ui.profile.address.deliveryaddress.DeliveryAddress
 import com.gulsenurgunes.furfriends.ui.home.homefirst.HomeScreen
+import com.gulsenurgunes.furfriends.ui.map.MapsScreen
 import com.gulsenurgunes.furfriends.ui.mycart.MyCartScreen
 import com.gulsenurgunes.furfriends.ui.navigation.BottomNavigationBar
 import com.gulsenurgunes.furfriends.ui.profile.ProfileScreen
@@ -186,6 +187,11 @@ fun AppNavHost(
                     Screen.Checkout.route
                 ) {
                     Checkout()
+                }
+                composable(
+                    Screen.Map.route
+                ) {
+                    MapsScreen()
                 }
             }
         }

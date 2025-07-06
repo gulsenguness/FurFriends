@@ -22,10 +22,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.gulsenurgunes.furfriends.R
+import com.gulsenurgunes.furfriends.navigation.Screen
 
 @Composable
-fun Section() {
+fun Section(
+    navController: NavController
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -53,7 +57,9 @@ fun Section() {
                 )
                 Spacer(Modifier.height(8.dp))
                 Button(
-                    onClick = {},
+                    onClick = {
+                        navController.navigate(Screen.Map.route)
+                    },
                     colors = ButtonDefaults.buttonColors(Color.Black)
                 ) { Text("Adopt A Pet") }
             }

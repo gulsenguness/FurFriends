@@ -29,7 +29,7 @@ fun Home(
             .fillMaxSize()
             .verticalScroll(scrollState)
     ) {
-        Section()
+        Section(navController)
         CategoryGrid(
             text = "Find Best Category",
             categories = listOf(
@@ -43,7 +43,7 @@ fun Home(
             },
             showIcon = false
         )
-        PetGrooming()
+        PetGrooming(navController)
         Video()
         DividerC()
         Food(navController = navController)
