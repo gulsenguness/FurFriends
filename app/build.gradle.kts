@@ -7,7 +7,7 @@ plugins {
     kotlin("kapt")
     id("com.google.gms.google-services")
 }
-
+val MAPS_API_KEY = project.findProperty("MAPS_API_KEY")?.toString() ?: ""
 android {
     namespace = "com.gulsenurgunes.furfriends"
     compileSdk = 35
@@ -20,6 +20,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders["MAPS_API_KEY"] = MAPS_API_KEY
     }
 
     buildTypes {
@@ -69,25 +71,32 @@ dependencies {
     //Navigation
     implementation(libs.androidx.navigation.compose)
 
-    implementation(libs.kotlinx.serialization.json)
-
     //Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth.ktx)
     implementation(libs.play.services.auth)
     implementation(libs.firebase.firestore.ktx)
 
-    // Retrofit
+    // Network - Retrofit & Logging
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
-
-    implementation(libs.coil.compose)
-
     implementation(libs.logging.interceptor)
+
+    // Serialization
+    implementation(libs.kotlinx.serialization.json)
+
+    //GoogleMaps
+    implementation(libs.play.services.maps)
+
+    // Image Loading
+    implementation(libs.coil.compose)
 
     //Datastore
     implementation(libs.androidx.datastore.preferences)
 
+    // 🎨 Material Icons
     implementation(libs.androidx.material.icons.extended)
 
+    //Map
+    implementation(libs.maps.compose)
 }

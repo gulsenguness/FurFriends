@@ -17,6 +17,9 @@
         <meta-data
             android:name="com.google.android.gms.actions.DEFAULT_WEB_CLIENT_ID"
             android:value="@string/default_web_client_id"/>
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

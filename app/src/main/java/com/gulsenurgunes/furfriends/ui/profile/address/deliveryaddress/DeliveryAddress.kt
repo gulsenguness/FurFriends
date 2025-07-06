@@ -1,5 +1,6 @@
 package com.gulsenurgunes.furfriends.ui.profile.address.deliveryaddress
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -38,9 +39,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.gulsenurgunes.furfriends.navigation.Screen
 import com.gulsenurgunes.furfriends.ui.auth.components.AuthButton
 import com.gulsenurgunes.furfriends.ui.fullpayment.checkout.CheckoutAddressCartSection
 import com.gulsenurgunes.furfriends.ui.profile.address.AddressViewModel
@@ -55,8 +58,8 @@ fun DeliveryAddress(
         viewModel.getAddresses()
     }
     val addresses = viewModel.addresses
-    var selectedAddress by rememberSaveable { mutableStateOf("") }
-    var notes by rememberSaveable { mutableStateOf("") }
+    var selectedAddress = viewModel.selectedAddress
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -72,11 +75,18 @@ fun DeliveryAddress(
         bottomBar = {
             AuthButton(
                 text = "Save Address",
-                onClick = { },
+                onClick = {
+                    if (viewModel.selectedAddress != null) {
+                        navController.navigate(Screen.Checkout.route)
+                    } else {
+                        Toast.makeText(context, "Lütfen bir adres seçin", Toast.LENGTH_SHORT).show()
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp, vertical = 16.dp)
             )
+
         }
 
     ) { innerPadding ->
@@ -102,16 +112,14 @@ fun DeliveryAddress(
                     address.state,
                     address.pinCode
                 ).joinToString(", ")
-                val isSelected = selectedAddress == fullAddress
-
                 CheckoutAddressCartSection(
                     leadingIcon = icon,
                     lastIcon = Icons.Outlined.RadioButtonUnchecked,
                     title = "${address.type} Address",
                     subtitle = fullAddress,
-                    isSelected = isSelected,
+                    isSelected = selectedAddress == fullAddress,
                     onClick = {
-                        selectedAddress = fullAddress
+                        viewModel.selectAddress(fullAddress)
                     }
                 )
             }
@@ -122,7 +130,9 @@ fun DeliveryAddress(
                     .padding(horizontal = 24.dp, vertical = 16.dp)
                     .background(Color.White, RoundedCornerShape(12.dp))
                     .border(1.dp, Color.Gray, RoundedCornerShape(12.dp))
-                    .clickable {}
+                    .clickable {
+                        navController.navigate(Screen.SavedAddresses.route)
+                    }
                     .padding(horizontal = 16.dp),
                 contentAlignment = Alignment.CenterStart
             ) {

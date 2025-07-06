@@ -47,13 +47,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.gulsenurgunes.furfriends.navigation.TopBar
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.gulsenurgunes.furfriends.ui.auth.components.AuthButton
 import com.gulsenurgunes.furfriends.ui.components.DividerC
+import com.gulsenurgunes.furfriends.ui.profile.address.AddressViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Checkout() {
+fun Checkout(
+    viewModel: AddressViewModel = hiltViewModel()
+) {
+    val selectedAddress = viewModel.selectedAddress
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -87,7 +91,7 @@ fun Checkout() {
                     leadingIcon = Icons.Default.LocationOn,
                     lastIcon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     title = "Delivery Address",
-                    subtitle = "123 Main Street, Anytown, USA 12345",
+                    subtitle = selectedAddress ?: "No address selected",
                     onClick = { },
                     isSelected = false
                 )

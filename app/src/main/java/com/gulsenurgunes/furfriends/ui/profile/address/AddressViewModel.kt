@@ -17,6 +17,12 @@ class AddressViewModel @Inject constructor(
 ) : ViewModel() {
 
     var addresses by mutableStateOf<List<AddressModel>>(emptyList())
+    var selectedAddress by mutableStateOf<String?>(null)
+        private set
+
+    fun selectAddress(address: String) {
+        selectedAddress = address
+    }
 
     fun getAddresses() {
         getAddresses { list ->
