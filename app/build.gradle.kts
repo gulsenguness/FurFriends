@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -7,7 +9,17 @@ plugins {
     kotlin("kapt")
     id("com.google.gms.google-services")
 }
-val MAPS_API_KEY = project.findProperty("MAPS_API_KEY")?.toString() ?: ""
+val MAPS_API_KEY: String by lazy {
+    val properties = Properties()
+    val localPropsFile = rootProject.file("local.properties")
+    if (localPropsFile.exists()) {
+        properties.load(localPropsFile.inputStream())
+    }
+    properties.getProperty("MAPS_API_KEY") ?: ""
+}
+
+println("Loaded MAPS_API_KEY: $MAPS_API_KEY")
+
 android {
     namespace = "com.gulsenurgunes.furfriends"
     compileSdk = 35
@@ -99,4 +111,6 @@ dependencies {
 
     //Map
     implementation(libs.maps.compose)
+    implementation(libs.play.services.location)
+    implementation(libs.accompanist.permissions.v0340)
 }
