@@ -33,86 +33,43 @@ import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.gulsenurgunes.furfriends.domain.model.AnimalLocation
 
 private val DEFAULT_LOCATION = LatLng(41.0082, 28.9784)
 
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun MapsScreen(viewModel: MapViewModel = hiltViewModel()) {
-    val locationPermissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
-    val state by viewModel.uiState.collectAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
-
-    LaunchedEffect(locationPermissionState.status) {
-        if (locationPermissionState.status.isGranted) {
-            Log.d("MapsScreen", "İzin verilmiş, konum yükleniyor")
-            viewModel.onAction(MapContract.UiAction.LoadMap)
-        } else {
-            Log.d("MapsScreen", "İzin verilmemiş, isteniyor")
-            locationPermissionState.launchPermissionRequest()
-        }
-    }
+fun MapsScreen(
+    mapViewModel: MapViewModel = hiltViewModel(),
+    animalViewModel: AnimalViewModel = hiltViewModel()
+) {
+    val permissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
+    val userLocation by mapViewModel.locationState.collectAsState()
+    val animals by animalViewModel.animals.collectAsState()
+    val cameraPositionState = rememberCameraPositionState()
 
     LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
-            when (effect) {
-                is MapContract.UiEffect.ShowError -> snackbarHostState.showSnackbar(effect.message)
-                MapContract.UiEffect.LocationPermissionDenied -> snackbarHostState.showSnackbar("Konum izni reddedildi!")
-            }
+        animalViewModel.loadAnimals()
+    }
+
+    LaunchedEffect(permissionState.status) {
+        if (permissionState.status.isGranted) {
+            mapViewModel.fetchUserLocation()
+        } else {
+            permissionState.launchPermissionRequest()
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Maps") }
+    LaunchedEffect(animals) {
+        animals.firstOrNull()?.let { animal ->
+            Log.d("MapsScreen", "Kamera odaklanıyor: ${animal.name}")
+            cameraPositionState.animate(
+                update = CameraUpdateFactory.newLatLngZoom(
+                    LatLng(animal.latitude, animal.longitude),
+                    12f
+                ),
+                durationMs = 1000
             )
-        },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { paddingValues ->
-
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            when {
-                state.isLoading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-
-                state.errorMessage != null -> {
-                    Text(
-                        text = state.errorMessage ?: "Hata",
-                        color = Color.Red,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-
-                else -> {
-                    MapContent(location = state.location)
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun MapContent(
-    location: LatLng?
-) {
-    val markerState = remember(location) {
-        MarkerState(position = location ?: DEFAULT_LOCATION)
-    }
-
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(DEFAULT_LOCATION, 14f)
-    }
-
-    LaunchedEffect(location) {
-        location?.let {
-            Log.d("MapContent", "Kamera konuma taşınıyor (move ile): $it")
-            cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(it, 14f))
         }
     }
 
@@ -120,15 +77,23 @@ fun MapContent(
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
-        properties = MapProperties(
-            isMyLocationEnabled = location != null,
-            mapType = MapType.NORMAL
-        )
+        properties = MapProperties(isMyLocationEnabled = userLocation != null)
     ) {
-        Marker(
-            state = markerState,
-            title = "Konumunuz",
-            snippet = "Hoş geldiniz!"
-        )
+        userLocation?.let {
+            Marker(
+                state = MarkerState(position = it),
+                title = "Konumunuz",
+                snippet = "Burası sizin yeriniz!"
+            )
+        }
+
+        animals.forEach { animal ->
+            Log.d("MapsScreen", "Marker çiziliyor: ${animal.name} → (${animal.latitude}, ${animal.longitude})")
+            Marker(
+                state = MarkerState(position = LatLng(animal.latitude, animal.longitude)),
+                title = animal.name,
+                snippet = "Tür: ${animal.type} - Ekleyen: ${animal.addedBy}"
+            )
+        }
     }
 }
