@@ -1,5 +1,6 @@
 package com.gulsenurgunes.furfriends.ui.map
 
+import android.Manifest
 import android.app.Application
 import android.content.pm.PackageManager
 import android.util.Log
@@ -21,52 +22,22 @@ import javax.inject.Inject
 class MapViewModel @Inject constructor(
     private val app: Application
 ) : AndroidViewModel(app) {
-    private val _uiState = MutableStateFlow(MapContract.UiState())
-    val uiState: StateFlow<MapContract.UiState> = _uiState.asStateFlow()
 
-    private val _effect = MutableSharedFlow<MapContract.UiEffect>()
-    val effect: SharedFlow<MapContract.UiEffect> = _effect
+    private val _locationState = MutableStateFlow<LatLng?>(null)
+    val locationState: StateFlow<LatLng?> = _locationState
 
-    fun onAction(action: MapContract.UiAction) {
-        when (action) {
-            is MapContract.UiAction.LoadMap -> {
-                loadUserLocation()
-            }
-        }
-    }
-
-    private fun loadUserLocation() {
-        _uiState.value = _uiState.value.copy(isLoading = true)
-
+    fun fetchUserLocation() {
         val permission = ContextCompat.checkSelfPermission(
-            app, android.Manifest.permission.ACCESS_FINE_LOCATION
+            app, Manifest.permission.ACCESS_FINE_LOCATION
         )
 
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            viewModelScope.launch {
-                Log.w("MapViewModel", "Konum izni verilmemiş.")
-                _effect.emit(MapContract.UiEffect.LocationPermissionDenied)
-            }
-            return
-        }
-        Log.d("MapViewModel", "Konum izni mevcut, konum alınmaya çalışılıyor...")
+        if (permission != PackageManager.PERMISSION_GRANTED) return
 
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(app)
-
-        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+        val fusedClient = LocationServices.getFusedLocationProviderClient(app)
+        fusedClient.lastLocation.addOnSuccessListener { location ->
             if (location != null) {
-                val latLng = LatLng(location.latitude, location.longitude)
-                Log.d("MapViewModel", "Konum başarıyla alındı: $latLng")
-                _uiState.value = MapContract.UiState(isLoading = false, location = latLng)
-            } else {
-                Log.w("MapViewModel", "lastLocation null döndü, requestLocationUpdates deneniyor...")
-                _uiState.value =
-                    MapContract.UiState(isLoading = false, errorMessage = "Konum bulunamadı.")
+                _locationState.value = LatLng(location.latitude, location.longitude)
             }
-        }.addOnFailureListener { exception ->
-            Log.e("MapViewModel", "Konum alınırken hata oluştu: ${exception.message}", exception)
-            _uiState.value = MapContract.UiState(isLoading = false, errorMessage = "Konum alınamadı.")
         }
-
     }
 }
