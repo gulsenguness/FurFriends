@@ -8,7 +8,7 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class AnimalRepositoryImpl @Inject constructor(
-    private val firestore: FirebaseFirestore
+    firestore: FirebaseFirestore
 ) : AnimalRepository {
 
     private val animalCollection = firestore.collection("animals")
